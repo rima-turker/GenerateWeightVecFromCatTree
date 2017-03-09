@@ -16,10 +16,14 @@ import java.util.Map.Entry;
 
 public class CreateWeightVector {
 
-	static String pathResultFile="C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\ResultFiles" +
-			"\\pageLinkCleaned_OnlyCategoryFiltered_L";
-	private static String CATEGORY_FOLDER = "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles"; 
-	private static String VECTOR_FOLDER = "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\Vectors"; 
+//	static String pathResultFile="/home/rtue/Desktop/GenerateTree/CategoryFiles/ResultFiles" +
+//			"/infoBoxCleaned_OnlyCategoryFiltered_L";
+	
+	static String pathResultFile="/home/rtue/Desktop/GenerateTree/ResultFiles" +
+			"/pageLinkCleaned_OnlyCategoryFiltered_L";
+	
+	private static String CATEGORY_FOLDER = "/home/rtue/Desktop/GenerateTree/CategoryFiles"; 
+	private static String VECTOR_FOLDER = "/home/rtue/Desktop/GenerateTree/Vectors"; 
 
 	private static Map<String,Integer> categoryPlaceHolder = new LinkedHashMap<>();
 	private static final Map<String,HashSet<String>> categoryMap = new HashMap<>();
@@ -54,7 +58,7 @@ public class CreateWeightVector {
 		BufferedWriter bw = null;
 		FileWriter fw = null;
 		try {
-			fw = new FileWriter(VECTOR_FOLDER+"\\"+i);
+			fw = new FileWriter(VECTOR_FOLDER+"/pageLinkCleaned_OnlyCategoryFiltered_L"+i);
 			bw = new BufferedWriter(fw);
 			final StringBuilder content = new StringBuilder();
 			for(final Entry<String, Map<String, Integer>> entity: entityMap.entrySet()) {

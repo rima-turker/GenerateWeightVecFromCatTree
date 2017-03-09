@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 
 public class GenerateLevelTrees_2 {
 
@@ -15,18 +16,18 @@ public class GenerateLevelTrees_2 {
 	 * @param args
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException 
+	
+	
+	public static void main() throws IOException 
 	{
 		BufferedReader br_MainCategory = null;
 		BufferedReader br_ChildFile = null;
 		BufferedReader br_MainFile = null;
 		FileReader fr = null;
 
-		//File log = new File(categoryName+"L"+Integer.parseInt(number)+1);
-		BufferedWriter bufferedWriter = null;
-		FileWriter fileWriter;
 		
-		String pathMainCategories= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\MainCategoryFile.txt";
+		//File log = new File(categoryName+"L"+Integer.parseInt(number)+1);
+		String pathMainCategories= System.getProperty("user.dir")+ File.separator+"MainCategoryFile.txt";
 		
 		br_MainCategory = new BufferedReader(new FileReader(pathMainCategories));
 		String line_list = null;
@@ -35,33 +36,36 @@ public class GenerateLevelTrees_2 {
 		
 		while ((line_mainCategory = br_MainCategory.readLine()) != null) 
         {
-			String categoryName = line_mainCategory.replace("http://dbpedia.org/resource/Category:", "");
+			String categoryName = line_mainCategory.replace(">", "");
        
-			String path= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\";
+			String path= System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+"/";
 		    
 			File[] files = null;
-			for (Integer i = 1; i < 5; i++) 
+			for (Integer i = 1; i < GenerateLevels_1.levelOfTheTree; i++) 
 			{
 				files=new File[i+1];
 				for (Integer j = 0; j <= i; j++) 
 				{
 					//files[j]=new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+categoryName+"_L0");
-					files[j]=new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+categoryName+"_L"+j.toString()); 
+					files[j]=new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+"/"+categoryName+"_L"+j.toString()); 
 					System.out.println(j);
 				}
 				//System.out.println("--------------------");
-				File mergedFile = new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+
+				File mergedFile = new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+File.separator+
 									categoryName+"AllLevel_L"+i.toString());
 				mergedFile.createNewFile();
 				mergeFiles(files,mergedFile);
 			}
         }
+		br_MainCategory.close();
 		
 
 	}
 	
 	public static void mergeFiles(File[] files, File mergedFile) {
 		 
+		HashSet<String> hset = new HashSet<>();
+		
 		FileWriter fstream = null;
 		BufferedWriter out = null;
 		try {
@@ -70,7 +74,7 @@ public class GenerateLevelTrees_2 {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
- 
+		
 		for (File f : files) {
 			System.out.println("merging: " + f.getName());
 			FileInputStream fis;
@@ -80,8 +84,10 @@ public class GenerateLevelTrees_2 {
  
 				String aLine;
 				while ((aLine = in.readLine()) != null) {
-					out.write(aLine);
-					out.newLine();
+					hset.add(aLine);
+					
+//					out.write(aLine);
+//					out.newLine();
 				}
  
 				in.close();
@@ -89,7 +95,8 @@ public class GenerateLevelTrees_2 {
 				e.printStackTrace();
 			}
 		}
- 
+		
+			
 		try {
 			out.close();
 		} catch (IOException e) {

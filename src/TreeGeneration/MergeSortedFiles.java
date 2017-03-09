@@ -28,7 +28,7 @@ public class MergeSortedFiles {
 
 		//File log = new File(categoryName+"L"+Integer.parseInt(number)+1);
 		
-		String pathMainCategories= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\MainCategoryFile.txt";
+		String pathMainCategories= "/home/rtue/Desktop/GenerateTree/CategoryFiles/MainCategoryFile.txt";
 		
 		br_MainCategory = new BufferedReader(new FileReader(pathMainCategories));
 		String line_list = null;
@@ -46,7 +46,7 @@ public class MergeSortedFiles {
 	        {
 				categoryName = line_mainCategory.replace("http://dbpedia.org/resource/Category:", "");
 	       
-				String pathMergeFile= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+categoryName+
+				String pathMergeFile= "/home/rtue/Desktop/GenerateTree/CategoryFiles/"+categoryName+File.separator+categoryName+
 									"AllLevel_L"+i.toString()+"_sort";
 				
 				files[indexCategory]=new File(pathMergeFile);
@@ -55,7 +55,7 @@ public class MergeSortedFiles {
 	        }
 			br_MainCategory.close();
 			indexCategory=0;
-			File mergedFile = new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\FilesForComparison\\AllCategoryAllLevel_L"
+			File mergedFile = new File("/home/rtue/Desktop/GenerateTree/FilesForComparison/AllCategoryAllLevel_L"
 								+i.toString());
 				mergedFile.createNewFile();
 				mergeFiles(files,mergedFile);

@@ -22,8 +22,8 @@ public class CompareTwoFiles {
 	 * @throws IOException 
 	 */
 	//AllCategoryAllLevel_L0_sort
-	static String pathCategory= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\FilesForComparison\\AllCategoryAllLevel_L";
-	static String pathZipFile= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\PageInfoFile.zip";
+	static String pathCategory= "/home/rtue/Desktop/GenerateTree/CategoryFiles/FilesForComparison/AllCategoryAllLevel_L";
+	static String pathZipFile= "/home/rtue/Desktop/GenerateTree/PageInfoFile.zip";
 
 	public static void main(String[] args) throws IOException 
 	{
@@ -44,12 +44,12 @@ public class CompareTwoFiles {
 
 					for (Integer i = 0; i < 5; i++) 
 					{
-						pathCategory= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\FilesForComparison\\AllCategoryAllLevel_L";
+						pathCategory= "/home/rtue/Desktop/GenerateTree/FilesForComparison/AllCategoryAllLevel_L";
 						pathCategory=pathCategory+i.toString()+"_sort";
 
 
 						File log=null;
-						log = new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\ResultFiles\\"+ze.getName()+
+						log = new File("/home/rtue/Desktop/GenerateTree/ResultFiles/"+ze.getName()+
 								"_L"+i.toString()+"_New");
 
 						if (log.exists()) 

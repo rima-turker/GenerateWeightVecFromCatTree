@@ -12,7 +12,7 @@ import java.util.Set;
 public class DeleteDublicates_3 {
 
 	
-	static String pathMainCategories= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\MainCategoryFile.txt";
+	static 	String pathMainCategories= System.getProperty("user.dir")+ File.separator+"MainCategoryFile.txt";
 	static BufferedReader br_MainCategory = null;
 	
 	public static void main(String[] args) throws IOException 
@@ -20,9 +20,9 @@ public class DeleteDublicates_3 {
 		br_MainCategory = new BufferedReader(new FileReader(pathMainCategories));
 		String line_mainCategory = null;
 		
-//		while ((line_mainCategory = br_MainCategory.readLine()) != null) 
-//        {
-//			String categoryName = line_mainCategory.replace("http://dbpedia.org/resource/Category:", "");
+		while ((line_mainCategory = br_MainCategory.readLine()) != null) 
+        {
+			String categoryName = line_mainCategory.replace(">", "");
        
 		    String fileName = null;
 		    String dublicatedFileName = null;
@@ -30,15 +30,17 @@ public class DeleteDublicates_3 {
 			{
 				
 				
-//				fileName ="C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+
+//				fileName ="/home/rtue/Desktop/GenerateTree/CategoryFiles/"+categoryName+File.separator+
 //						categoryName+"AllCategory_L"+i.toString()+"_sort"; 
 				
-				fileName ="C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\FilesForComparison\\AllCategoryAllLevel_L"+i.toString()+"_sort"; 
+				fileName ="/home/rtue/Desktop/GenerateTree/FilesForComparison/AllCategoryAllLevel_L"+i.toString()+"_sort"; 
 				
-				dublicatedFileName = "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\FilesForComparison\\AllCategoryAllLevel_L"+i.toString(); 
+				dublicatedFileName = "/home/rtue/Desktop/GenerateTree/FilesForComparison/AllCategoryAllLevel_L"+i.toString(); 
+//				dublicatedFileName = "/home/rtue/Desktop/GenerateTree/CategoryFiles/"+categoryName+File.separator+
+//						categoryName+"AllLevel_L"+i.toString();
 				deleteDuplicatesFromFile(dublicatedFileName,fileName);
 			}
- //       }
+        }
 	}
 	
 	public static void deleteDuplicatesFromFile(String dublicatedFile,String filename) throws IOException {

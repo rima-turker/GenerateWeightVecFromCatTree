@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -19,109 +21,125 @@ public class GenerateLevels_1 {
 	 * @throws IOException 
 	 */
 	
-	
-	public static  void main(String[] args) throws IOException {
-	
+	final static int levelOfTheTree=10;
+
+	public static  void main() throws IOException 
+	{
+
+		String fileSeparator=File.separator;
+		String sysProperty=System.getProperty("user.dir");
+
 		BufferedReader br_MainCategory = null;
-		BufferedReader br_ChildFile = null;
 		BufferedReader br_MainFile = null;
 		FileReader fr = null;
 
 		//File log = new File(categoryName+"L"+Integer.parseInt(number)+1);
 		BufferedWriter bufferedWriter = null;
+
+		
 		FileWriter fileWriter;
-		
-		String pathMainCategories= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\MainCategoryFile.txt";
-		
+		String pathMainCategories= sysProperty+ fileSeparator+"MainCategoryFile.txt";
+
 		br_MainCategory = new BufferedReader(new FileReader(pathMainCategories));
-		String line_list = null;
 		String line_mainCategory = null;
 		String line=null;
+
+
+		br_MainFile = new BufferedReader(new FileReader(sysProperty+ fileSeparator+ "skos_broader_CatCleaned_sort.txt"));
 		
 		while ((line_mainCategory = br_MainCategory.readLine()) != null) 
-        {
-			String categoryName = line_mainCategory.replace("http://dbpedia.org/resource/Category:", "");
-       
-			File Dir = new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\");
-			Dir.mkdir();
+		{
+			String categoryName = line_mainCategory.replace(">", "");
+
+			File Dir = new File(System.getProperty("user.dir")+File.separator+"CategoryFiles"+File.separator+categoryName+File.separator);
 			
-			String path= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\skos_categories_en2015_10.ttl";
-		    
-			for (Integer i = 0; i < 5; i++) 
+			if (!Dir.exists()) 
+			{
+				Dir.mkdir();
+			}
+
+			for (Integer i = 0; i < levelOfTheTree ; i++) 
 			{
 				String number= i.toString();
+
 				
-				File log=null;
+				 File log = new File(System.getProperty("user.dir")+File.separator+"CategoryFiles"+File.separator+categoryName+File.separator+
+						categoryName+"_L"+(Integer.parseInt(number)));
+				
+				if (log.exists()) 
+				{
+					log.delete();
+				}
+				log.createNewFile();
+				
+				fileWriter = new FileWriter(log,false);
+				bufferedWriter = new BufferedWriter(fileWriter);
 				if (i==0) 
 				{
-					log = new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+
-							categoryName+"_L"+(Integer.parseInt(number)));
-					if (log.exists()) 
-					{
-						log.delete();
-					}
-					log.createNewFile();
-					fileWriter = new FileWriter(log, true);
-				    bufferedWriter = new BufferedWriter(fileWriter);
-				   
-				    bufferedWriter.write("<"+line_mainCategory+">");
-				    bufferedWriter.close();
+					bufferedWriter.write(line_mainCategory);
 				}
 				else
 				{
-					log = new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+
-							categoryName+"_L"+(Integer.parseInt(number)));
-					log.createNewFile();
+
+					String pathChildFile= System.getProperty("user.dir")+File.separator+"CategoryFiles"+File.separator+categoryName+
+							File.separator+categoryName+"_L"+ (Integer.parseInt(number)-1);
+
+
+					fileWriter = new FileWriter(log, false);
+					bufferedWriter = new BufferedWriter(fileWriter);
+
+					BufferedReader br_CategoryLevel = new BufferedReader(new FileReader(pathChildFile));
 					
-					String pathChildFile= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+categoryName+
-							"_L"+ (Integer.parseInt(number)-1);
-					
-					br_ChildFile = new BufferedReader(new FileReader(pathChildFile));
-					   
-					List<String> listChild = new ArrayList<>();
-					
-			        while ((line_list = br_ChildFile.readLine()) != null) 
-			        {
-			            listChild.add(line_list);
-			        }
-			        br_ChildFile.close();
-					
-			        
-			        br_MainFile = new BufferedReader(new FileReader(path));
-			        String str_format =null;
-//					int counter =0;
-//					String lastLine=null;
-					
-					fileWriter = new FileWriter(log, true);
-				    bufferedWriter = new BufferedWriter(fileWriter);
-				    
+					br_MainFile = new BufferedReader(new FileReader(sysProperty+ fileSeparator+ "skos_broader_CatCleaned_sort.txt"));
+					String lineCategory;
+
+					int count = 0;
+
+					HashSet<String> hsetChildCategory = new HashSet<>();
+					HashSet<String> hsetParents = new HashSet<>();
+
+					while ((lineCategory = br_CategoryLevel.readLine()) != null) 
+					{
+						//String onlyCategoryName=lineCategory.substring( lineCategory.indexOf("Category:"), lineCategory.length());
+						hsetChildCategory.add(lineCategory);
+					}
+
 					while ((line = br_MainFile.readLine()) != null)
 					{
-						String[] entityAndCategory = line.split(" ");  
-						
-						str_format=entityAndCategory[2];
-						if (listChild.contains(str_format)) 
-						{
-							if (line.contains("http://www.w3.org/2004/02/skos/core#broader> " +
-									"<http://dbpedia.org/resource/Category:")) 
-							{
-								bufferedWriter.write(entityAndCategory[0]);
-								bufferedWriter.newLine();
-		
-							}
-							
-						}
-							
-				    }
-					br_MainFile.close();
-				}
-				bufferedWriter.close();
-				}
-        }
-		System.out.println("Finish Writing");
-		bufferedWriter.close();
-		br_MainFile.close();
-			
-	}
 
+						
+							if (hsetChildCategory.contains(line.split(" ")[1]))
+							{
+
+								hsetParents.add(line.split(" ")[0]);
+							}
+						
+					}
+
+					for(String hsetline:hsetParents) 
+					{
+						bufferedWriter.write(hsetline);
+						bufferedWriter.newLine();
+					}
+					System.out.println("size"+hsetParents.size());
+					//System.out.println("count"+count);
+					count=0;
+
+					br_MainFile.close();
+					br_CategoryLevel.close();
+					bufferedWriter.close();
+				}
+
+				bufferedWriter.close();
+			}
+			System.out.println("Finish Writing");
+			bufferedWriter.close();
+			br_MainFile.close();
+		}
+		br_MainCategory.close();
+		
+	}
+	
+	
 }
+

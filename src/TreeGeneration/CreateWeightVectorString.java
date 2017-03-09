@@ -16,16 +16,20 @@ import java.util.Map.Entry;
 
 public class CreateWeightVectorString {
 
-	static String pathResultFile="C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\ResultFiles" +
-			"\\pageLinkCleaned_OnlyCategoryFiltered_L";
-	private static String CATEGORY_FOLDER = "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles"; 
-	private static String VECTOR_FOLDER = "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\Vectors"; 
+	static String pathResultFile="/home/rtue/Desktop/GenerateTree/ResultFiles" +
+			"/pageLinkCleaned_OnlyCategoryFiltered_L";
+	
+//	static String pathResultFile="/home/rtue/Desktop/GenerateTree/ResultFiles" +
+//			"/infoBoxCleaned_OnlyCategoryFiltered_L";
+	
+	private static String CATEGORY_FOLDER = "/home/rtue/Desktop/GenerateTree/CategoryFiles"; 
+	private static String VECTOR_FOLDER = "/home/rtue/Desktop/GenerateTree/Vectors"; 
 
 	private static Map<String,Integer> categoryPlaceHolder = new LinkedHashMap<>();
 	private static final Map<String,HashSet<String>> categoryMap = new HashMap<>();
 	public static void main(String[] args) throws FileNotFoundException 
 	{	
-		for (int i = 0; i < 5; i++) 
+		for (int i = 0; i < 1; i++) 
 		{
 			createCategoryMap(i);
 			final Map<String,int[]> entityMap = generateWeightVector(i);
@@ -54,17 +58,23 @@ public class CreateWeightVectorString {
 		BufferedWriter bw = null;
 		FileWriter fw = null;
 		try {
-			fw = new FileWriter(VECTOR_FOLDER+"\\categoryNames"+i,true);
+			fw = new FileWriter(VECTOR_FOLDER+"/WeightVector_pageLink_Str_L"+i,true);
 			bw = new BufferedWriter(fw);
 			
 			for(final Entry<String, int[]> entity: entityMap.entrySet()) {
 				final StringBuilder content = new StringBuilder();
 				content.append(entity.getKey()).append("-").append("<");
+				
 //				for(int j=0;j<categoryPlaceHolder.size();j++) {
+//					content.append(String.valueOf(entity.getValue()[j])).append(",");
+//				}
+				
+				//String
 				for(String cate: categoryPlaceHolder.keySet()) {
 					int j = categoryPlaceHolder.get(cate);
 					content.append(cate).append(":").append(String.valueOf(entity.getValue()[j])).append(",");
 				}
+				
 				content.append(">").append("\n");
 				bw.write(content.toString());
 			}
