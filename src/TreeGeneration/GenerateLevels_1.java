@@ -106,14 +106,11 @@ public class GenerateLevels_1 {
 
 					while ((line = br_MainFile.readLine()) != null)
 					{
-
-						
 							if (hsetChildCategory.contains(line.split(" ")[1]))
 							{
 
 								hsetParents.add(line.split(" ")[0]);
 							}
-						
 					}
 
 					for(String hsetline:hsetParents) 

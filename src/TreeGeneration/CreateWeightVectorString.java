@@ -16,20 +16,19 @@ import java.util.Map.Entry;
 
 public class CreateWeightVectorString {
 
-	static String pathResultFile="/home/rtue/Desktop/GenerateTree/ResultFiles" +
-			"/pageLinkCleaned_OnlyCategoryFiltered_L";
+	static String pathResultFile=System.getProperty("user.dir")+ File.separator+"CategoryTreeFilteredMainFiles" +
+			File.separator+"pageLinkCleaned_OnlyCategoryFiltered_L";
 	
-//	static String pathResultFile="/home/rtue/Desktop/GenerateTree/ResultFiles" +
-//			"/infoBoxCleaned_OnlyCategoryFiltered_L";
+
 	
-	private static String CATEGORY_FOLDER = "/home/rtue/Desktop/GenerateTree/CategoryFiles"; 
-	private static String VECTOR_FOLDER = "/home/rtue/Desktop/GenerateTree/Vectors"; 
+	private static String CATEGORY_FOLDER = System.getProperty("user.dir")+ File.separator+"CategoryFiles";  
+	private static String VECTOR_FOLDER = System.getProperty("user.dir")+ File.separator+"Vectors"; 
 
 	private static Map<String,Integer> categoryPlaceHolder = new LinkedHashMap<>();
 	private static final Map<String,HashSet<String>> categoryMap = new HashMap<>();
-	public static void main(String[] args) throws FileNotFoundException 
+	public static void main() throws FileNotFoundException 
 	{	
-		for (int i = 0; i < 1; i++) 
+		for (int i = 0; i < GlobalVariables.levelOfTheTree; i++) 
 		{
 			createCategoryMap(i);
 			final Map<String,int[]> entityMap = generateWeightVector(i);
@@ -172,19 +171,19 @@ public class CreateWeightVectorString {
 			}
 			categoryPlaceHolder.put(filename, i);
 			i++;
-			final String fileName = subCategoryFolder.getName()+"AllLevel_L"+level+"_sort";
-
+			final String fileName = subCategoryFolder.getName()+"_L"+level;
+			
 			BufferedReader br = null;
 			FileReader fr = null;
 			try {
-				final String file = CATEGORY_FOLDER+"/"+subCategoryFolder.getName()+"/"+fileName;	
+				final String file = CATEGORY_FOLDER+"/"+subCategoryFolder.getName()+File.separator+fileName;	
 				fr = new FileReader(file);
 				br = new BufferedReader(fr);
 				String sCurrentLine;
 				br = new BufferedReader(new FileReader(file));
 				final HashSet<String> content = new HashSet<>();
 				while ((sCurrentLine = br.readLine()) != null) {
-					sCurrentLine = sCurrentLine.substring(sCurrentLine.indexOf("Category:"), sCurrentLine.length());
+					//sCurrentLine = sCurrentLine.substring(sCurrentLine.indexOf("Category:"), sCurrentLine.length());
 					content.add(sCurrentLine);	
 				}
 				categoryMap.put(subCategoryFolder.getName(), content);
@@ -202,5 +201,6 @@ public class CreateWeightVectorString {
 			}
 		}
 	}
+
 
 }

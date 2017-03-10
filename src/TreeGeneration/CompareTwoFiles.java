@@ -22,7 +22,7 @@ public class CompareTwoFiles {
 	 * @throws IOException 
 	 */
 	//AllCategoryAllLevel_L0_sort
-	static String pathCategory= System.getProperty("user.dir")+File.separator+"CategoryFiles/CategoryTrees/CategoryTrees_L";
+	static String pathTree= System.getProperty("user.dir")+File.separator+"CategoryTrees"+File.separator+"CompleteTree_L";
 	static String pathZipFile= System.getProperty("user.dir")+File.separator+"PageInfoFile.zip";
 
 	public static void main() throws IOException 
@@ -42,15 +42,15 @@ public class CompareTwoFiles {
 					BufferedReader br_mainFile = new BufferedReader(
 							new InputStreamReader(zf.getInputStream(ze)));
 
-					for (Integer i = 5; i < GlobalVariables.levelOfTheTree; i++) 
+					for (Integer i = 0; i < GlobalVariables.levelOfTheTree; i++) 
 					{
-						pathCategory= System.getProperty("user.dir")+File.separator+"/CategoryTrees/CategoryTrees_L";
-						pathCategory=pathCategory+i.toString();
+						pathTree= System.getProperty("user.dir")+File.separator+"CategoryTrees"+File.separator+"CompleteTree_L";
+						pathTree=pathTree+i.toString();
 
 
 						File log=null;
 						log = new File(System.getProperty("user.dir")+File.separator+"CategoryTreeFilteredMainFiles"+File.separator+ze.getName()+
-								"_L"+i.toString()+"_New");
+								"_L"+i.toString());
 
 						if (log.exists()) 
 						{
@@ -64,7 +64,7 @@ public class CompareTwoFiles {
 						fileWriter = new FileWriter(log, false);
 						bufferedWriter = new BufferedWriter(fileWriter);
 
-						BufferedReader br_CategoryLevel = new BufferedReader(new FileReader(pathCategory));
+						BufferedReader br_CategoryLevel = new BufferedReader(new FileReader(pathTree));
 						String lineMain;
 						String lineCategory;
 

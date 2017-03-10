@@ -38,27 +38,34 @@ public class GenerateLevelTrees_2 {
 			
 				if (i==0) 
 				{
-					files[i]=new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+"/"+categoryName+"_L"+i.toString()); 
-					
-					File mergedFile = new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+File.separator+
-							categoryName+"Tree_L"+i.toString());
-					mergedFile.createNewFile();
-					mergeFiles(files,mergedFile);
-					
-					break;
+					files[i]=new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles"+File.separator+categoryName+File.separator+categoryName+"_L"+i.toString()); 
 				
 				}
-				for (Integer j = 0; j <=i; j++) 
+				else
 				{
-					//files[j]=new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+categoryName+"_L0");
-					files[j]=new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+"/"+categoryName+"_L"+j.toString()); 
-					//System.out.println(j);
+					for (Integer j = 0; j <=i; j++) 
+					{
+						//files[j]=new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+categoryName+"_L0");
+						files[j]=new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+"/"+categoryName+"_L"+j.toString()); 
+						//System.out.println(j);
+					}
 				}
+				
 				//System.out.println("--------------------");
 				File mergedFile = new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+File.separator+
 									categoryName+"Tree_L"+i.toString());
-				mergedFile.createNewFile();
-				mergeFiles(files,mergedFile);
+				
+				File  oldMergedFile= new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+File.separator+
+						categoryName+"Tree_L"+i.toString()+"___");
+				
+				if (oldMergedFile.exists()) {
+					oldMergedFile.delete();
+				}
+//				if (mergedFile.exists()) {
+//					mergedFile.delete();
+//				}
+//				mergedFile.createNewFile();
+				//mergeFiles(files,mergedFile);
 			}
         }
 		br_MainCategory.close();
@@ -66,7 +73,7 @@ public class GenerateLevelTrees_2 {
 
 	}
 	
-	public static void mergeFiles(File[] files, File mergedFile) {
+	public static void mergeFiles(File[] files, File mergedFile) throws IOException {
 		 
 		HashSet<String> hset = new HashSet<>();
 		
@@ -81,30 +88,34 @@ public class GenerateLevelTrees_2 {
 		
 		for (File f : files) {
 			System.out.println("merging: " + f.getName());
-			FileInputStream fis;
+			
 			try {
+				
+				FileInputStream fis;
 				fis = new FileInputStream(f);
 				BufferedReader in = new BufferedReader(new InputStreamReader(fis));
- 
 				String aLine;
-				while ((aLine = in.readLine()) != null) {
+				while ((aLine = in.readLine()) != null) 
+				{
 					hset.add(aLine);
 				}
  
 				in.close();
 				
-				for(String hsetline:hset) 
-				{
-					bW_MergedFile.write(hsetline);
-					bW_MergedFile.newLine();
-				}
-				System.out.println("size"+hset.size());
+				
 				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		
+		
+		for(String hsetline:hset) 
+		{
+			bW_MergedFile.write(hsetline);
+			bW_MergedFile.newLine();
+		}
+		System.out.println("size"+hset.size());
 			
 		try {
 			bW_MergedFile.close();

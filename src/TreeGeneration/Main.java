@@ -21,10 +21,10 @@ public class Main {
 		//GenerateLevels_1.main();
 		//GenerateLevelTrees_2.main();
 		//CountLines.CountUniqueCategories();
-		//GenerateLevelTrees_2.main();
 		//GenerateCategoryTrees.main();
-		CompareTwoFiles.main();
-		String pathMainCategories= System.getProperty("user.dir") + File.separator+"MainCategoryFile.txt";
+		//CompareTwoFiles.main();
+		CreateWeightVectorString.main();
+		//String pathMainCategories= System.getProperty("user.dir") + File.separator+"MainCategoryFile.txt";
 		
 	}
 

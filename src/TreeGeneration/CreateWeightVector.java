@@ -22,7 +22,7 @@ public class CreateWeightVector {
 	static String pathResultFile="/home/rtue/Desktop/GenerateTree/ResultFiles" +
 			"/pageLinkCleaned_OnlyCategoryFiltered_L";
 	
-	private static String CATEGORY_FOLDER = "/home/rtue/Desktop/GenerateTree/CategoryFiles"; 
+	private static String CATEGORY_FOLDER = System.getProperty("user.dir")+ File.separator+"CategoryFiles"; 
 	private static String VECTOR_FOLDER = "/home/rtue/Desktop/GenerateTree/Vectors"; 
 
 	private static Map<String,Integer> categoryPlaceHolder = new LinkedHashMap<>();
