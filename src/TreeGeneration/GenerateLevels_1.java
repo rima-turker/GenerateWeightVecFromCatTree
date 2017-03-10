@@ -21,7 +21,7 @@ public class GenerateLevels_1 {
 	 * @throws IOException 
 	 */
 	
-	final static int levelOfTheTree=10;
+	final static int levelOfTheTree=GlobalVariables.levelOfTheTree;
 
 	public static  void main() throws IOException 
 	{

@@ -17,10 +17,13 @@ public class Main {
 	public static void main(String[] args) throws IOException 
 	{
 	
-		
-		GenerateLevels_1.main();
+		//CountLines.main();
+		//GenerateLevels_1.main();
 		//GenerateLevelTrees_2.main();
-		
+		//CountLines.CountUniqueCategories();
+		//GenerateLevelTrees_2.main();
+		//GenerateCategoryTrees.main();
+		CompareTwoFiles.main();
 		String pathMainCategories= System.getProperty("user.dir") + File.separator+"MainCategoryFile.txt";
 		
 	}

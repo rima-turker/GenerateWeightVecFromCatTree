@@ -22,10 +22,10 @@ public class CompareTwoFiles {
 	 * @throws IOException 
 	 */
 	//AllCategoryAllLevel_L0_sort
-	static String pathCategory= "/home/rtue/Desktop/GenerateTree/CategoryFiles/FilesForComparison/AllCategoryAllLevel_L";
-	static String pathZipFile= "/home/rtue/Desktop/GenerateTree/PageInfoFile.zip";
+	static String pathCategory= System.getProperty("user.dir")+File.separator+"CategoryFiles/CategoryTrees/CategoryTrees_L";
+	static String pathZipFile= System.getProperty("user.dir")+File.separator+"PageInfoFile.zip";
 
-	public static void main(String[] args) throws IOException 
+	public static void main() throws IOException 
 	{
 		Date start = new Date();
 		try {
@@ -35,21 +35,21 @@ public class CompareTwoFiles {
 			while (entries.hasMoreElements()) 
 			{
 				ZipEntry ze = (ZipEntry) entries.nextElement();
-				//ze = (ZipEntry) entries.nextElement();
+				ze = (ZipEntry) entries.nextElement();
 				long size = ze.getSize();
 				if (size > 0) 
 				{
 					BufferedReader br_mainFile = new BufferedReader(
 							new InputStreamReader(zf.getInputStream(ze)));
 
-					for (Integer i = 0; i < 5; i++) 
+					for (Integer i = 5; i < GlobalVariables.levelOfTheTree; i++) 
 					{
-						pathCategory= "/home/rtue/Desktop/GenerateTree/FilesForComparison/AllCategoryAllLevel_L";
-						pathCategory=pathCategory+i.toString()+"_sort";
+						pathCategory= System.getProperty("user.dir")+File.separator+"/CategoryTrees/CategoryTrees_L";
+						pathCategory=pathCategory+i.toString();
 
 
 						File log=null;
-						log = new File("/home/rtue/Desktop/GenerateTree/ResultFiles/"+ze.getName()+
+						log = new File(System.getProperty("user.dir")+File.separator+"CategoryTreeFilteredMainFiles"+File.separator+ze.getName()+
 								"_L"+i.toString()+"_New");
 
 						if (log.exists()) 
@@ -61,7 +61,7 @@ public class CompareTwoFiles {
 						BufferedWriter bufferedWriter = null;
 						FileWriter fileWriter;
 
-						fileWriter = new FileWriter(log, true);
+						fileWriter = new FileWriter(log, false);
 						bufferedWriter = new BufferedWriter(fileWriter);
 
 						BufferedReader br_CategoryLevel = new BufferedReader(new FileReader(pathCategory));
@@ -75,8 +75,8 @@ public class CompareTwoFiles {
 
 						while ((lineCategory = br_CategoryLevel.readLine()) != null) 
 						{
-							String onlyCategoryName=lineCategory.substring( lineCategory.indexOf("Category:"), lineCategory.length());
-							hsetCategory.add(onlyCategoryName);
+							//String onlyCategoryName=lineCategory.substring( lineCategory.indexOf("Category:"), lineCategory.length());
+							hsetCategory.add(lineCategory);
 						}
 
 
@@ -147,64 +147,6 @@ public class CompareTwoFiles {
 //    	br_mainFile.close();
 //    }
 
-
-
-
-
-//		for (Integer i = 0; i < 5; i++) 
-//		{
-//			pathCombineLevels= "C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\" +
-//								"	";
-//		}
-
-//		BufferedReader reader1 = new BufferedReader(new FileReader("C:\\file1.txt"));
-//         
-//        BufferedReader reader2 = new BufferedReader(new FileReader("C:\\file2.txt"));
-//         
-//        String line1 = reader1.readLine();
-//         
-//        String line2 = reader2.readLine();
-//         
-//        boolean areEqual = true;
-//         
-//        int lineNum = 1;
-//         
-//        while (line1 != null || line2 != null)
-//        {
-//            if(line1 == null || line2 == null)
-//            {
-//                areEqual = false;
-//                 
-//                break;
-//            }
-//            else if(! line1.equalsIgnoreCase(line2))
-//            {
-//                areEqual = false;
-//                 
-//                break;
-//            }
-//             
-//            line1 = reader1.readLine();
-//             
-//            line2 = reader2.readLine();
-//             
-//            lineNum++;
-//        }
-//         
-//        if(areEqual)
-//        {
-//            System.out.println("Two files have same content.");
-//        }
-//        else
-//        {
-//            System.out.println("Two files have different content. They differ at line "+lineNum);
-//             
-//            System.out.println("File1 has "+line1+" and File2 has "+line2+" at line "+lineNum);
-//        }
-//         
-//        reader1.close();
-//         
-//        reader2.close();
 }
 
 

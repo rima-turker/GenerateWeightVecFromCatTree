@@ -26,7 +26,7 @@ public class DeleteDublicates_3 {
        
 		    String fileName = null;
 		    String dublicatedFileName = null;
-			for (Integer i = 0; i < 5; i++) 
+			for (Integer i = 0; i < GlobalVariables.levelOfTheTree; i++) 
 			{
 				
 				

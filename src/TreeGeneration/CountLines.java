@@ -3,6 +3,7 @@ package TreeGeneration;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,20 +11,15 @@ import java.util.HashSet;
 
 public class CountLines 
 {
-	public static void main(String[] args) throws IOException 
+	
+	static int levelOfTree= GlobalVariables.levelOfTheTree;
+	
+	public static void main() throws IOException 
 	{
 		String fileSeparator=File.separator;
 		String sysProperty=System.getProperty("user.dir");
 
 		BufferedReader br_MainCategory = null;
-		BufferedReader br_MainFile = null;
-		FileReader fr = null;
-
-		//File log = new File(categoryName+"L"+Integer.parseInt(number)+1);
-		BufferedWriter bufferedWriter = null;
-
-
-		FileWriter fileWriter;
 		String pathMainCategories= sysProperty+ fileSeparator+"MainCategoryFile.txt";
 
 		br_MainCategory = new BufferedReader(new FileReader(pathMainCategories));
@@ -35,7 +31,7 @@ public class CountLines
 
 			String categoryName = line_mainCategory.replace(">", "");
 			System.out.print(categoryName+": ");
-			for (Integer i = 0; i < 5; i++) 
+			for (Integer i = 0; i < levelOfTree; i++) 
 			{
 				String number= i.toString();
 
@@ -60,5 +56,23 @@ public class CountLines
 			System.out.println();
 			
 		}
+		br_MainCategory.close();
 	}
+	
+	public static void CountUniqueCategories() throws IOException
+	{
+		BufferedReader br_MainFile = new BufferedReader(new FileReader(GlobalVariables.path_MainSkosFile));
+		String line = null;
+		HashSet<String> hset = new HashSet<>();
+		while ((line = br_MainFile.readLine()) != null) 
+		{
+			String[] str_split = line.split(" ");
+			hset.add(str_split[0]);
+			hset.add(str_split[1]);
+		}
+		
+		System.out.println("Unique Cat Number:"+hset.size() );
+		br_MainFile.close();
+	}
+
 }
