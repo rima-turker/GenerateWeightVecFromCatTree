@@ -7,10 +7,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -114,20 +116,24 @@ public class CreateWeightVectorString {
 					int map[] = entityMap.get(entityName);
 					if(map == null) {
 						map = new int[categoryPlaceHolder.size()];
-						final String returnedCategoryName = getCategoryName(categoryName);
-						if(returnedCategoryName==null) {
+						final List<String> returnedCategoryName = getCategoryName(categoryName);
+						if(returnedCategoryName.isEmpty()) {
 							//throw new IllegalArgumentException("Category not found.");
 							continue;
 						}
-						map[categoryPlaceHolder.get(returnedCategoryName)] =  1;
+						for(String mainCategory: returnedCategoryName){
+							map[categoryPlaceHolder.get(mainCategory)] =  1;
+						}
 						entityMap.put(entityName, map);
 					}else {
-						final String returnedCategoryName = getCategoryName(categoryName);
-						if(returnedCategoryName==null) {
+						final List<String> returnedCategoryName = getCategoryName(categoryName);
+						if(returnedCategoryName.isEmpty()) {
 							//throw new IllegalArgumentException("Category not found.");
 							continue;
 						}				
-						map[categoryPlaceHolder.get(returnedCategoryName)]+=1; 						
+						for(String mainCategory: returnedCategoryName){
+							map[categoryPlaceHolder.get(mainCategory)]+=1;
+						}
 						entityMap.put(entityName, map);
 					}
 			}
@@ -148,13 +154,14 @@ public class CreateWeightVectorString {
 	}
 	
 	
-	private static String getCategoryName(String categoryName) {
+	private static List<String> getCategoryName(String categoryName) {
+		final List<String> mainCategoryNames = new ArrayList<>();
 		for(final Entry<String, HashSet<String>> entity: categoryMap.entrySet()) {
 			if(entity.getValue().contains(categoryName)) {
-				return entity.getKey();
+				mainCategoryNames.add(entity.getKey());				
 			}
 		}
-		return null;
+		return mainCategoryNames;
 	}
 
 
@@ -171,7 +178,7 @@ public class CreateWeightVectorString {
 			}
 			categoryPlaceHolder.put(filename, i);
 			i++;
-			final String fileName = subCategoryFolder.getName()+"_L"+level;
+			final String fileName = subCategoryFolder.getName()+"Tree_L"+level;
 			
 			BufferedReader br = null;
 			FileReader fr = null;

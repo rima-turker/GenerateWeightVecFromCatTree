@@ -12,7 +12,8 @@ import java.util.HashSet;
 public class CountLines 
 {
 	
-	static int levelOfTree= GlobalVariables.levelOfTheTree;
+	//static int levelOfTree= GlobalVariables.levelOfTheTree;
+	static int levelOfTree= 7;
 	
 	public static void main() throws IOException 
 	{

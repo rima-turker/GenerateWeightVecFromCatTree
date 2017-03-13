@@ -23,9 +23,25 @@ public class Main {
 		//CountLines.CountUniqueCategories();
 		//GenerateCategoryTrees.main();
 		//CompareTwoFiles.main();
-		CreateWeightVectorString.main();
+		//CreateWeightVectorString.main();
 		//String pathMainCategories= System.getProperty("user.dir") + File.separator+"MainCategoryFile.txt";
 		
+		
+		String fS=File.separator;
+		String sP=System.getProperty("user.dir");
+
+		BufferedReader br_Entities = null;
+		String pathEntities= sP+ fS+"FamEntities.txt";
+
+		br_Entities = new BufferedReader(new FileReader(pathEntities));
+		String line_mainCategory = null;
+		String line=null;
+
+		while ((line_mainCategory = br_Entities.readLine()) != null) 
+		{
+			
+		}
+		br_Entities.close();
 	}
 
 }
