@@ -18,9 +18,16 @@ import java.util.Map.Entry;
 
 public class CreateWeightVectorString {
 
-	static String pathResultFile=System.getProperty("user.dir")+ File.separator+"CategoryTreeFilteredMainFiles" +
-			File.separator+"pageLinkCleaned_OnlyCategoryFiltered_L";
 	
+	//static String fileName="infoBoxCleaned_OnlyCategoryFiltered_sort_L";
+	
+	static String fileName="pageLinkCleaned_OnlyCategoryFiltered_L";
+	
+//	static String pathResultFile=System.getProperty("user.dir")+ File.separator+"CategoryTreeFilteredMainFiles" +
+//			File.separator+"pageLinkCleaned_OnlyCategoryFiltered_L";
+	
+	static String pathResultFile=System.getProperty("user.dir")+ File.separator+"CategoryTreeFilteredMainFiles" +
+			File.separator+fileName;
 
 	
 	private static String CATEGORY_FOLDER = System.getProperty("user.dir")+ File.separator+"CategoryFiles";  
@@ -59,7 +66,7 @@ public class CreateWeightVectorString {
 		BufferedWriter bw = null;
 		FileWriter fw = null;
 		try {
-			fw = new FileWriter(VECTOR_FOLDER+"/WeightVector_pageLink_Str_L"+i,true);
+			fw = new FileWriter(VECTOR_FOLDER+File.separator+fileName+i,true);
 			bw = new BufferedWriter(fw);
 			
 			for(final Entry<String, int[]> entity: entityMap.entrySet()) {
