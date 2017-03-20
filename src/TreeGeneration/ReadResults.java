@@ -119,6 +119,7 @@ public class ReadResults
 	public static void ReadResultFromCVSFile(String fileNAme,String subCatCount)
 	{
 		ReadSubCategoryNumber(subCatCount); 
+		
 		path+=fileNAme;
 		
 		try {
@@ -205,10 +206,9 @@ public class ReadResults
 				
 				int_tempPath= Integer.parseInt(categoryandPath.get(i).substring(categoryandPath.get(i).indexOf(":")+1, categoryandPath.get(i).length()));
 				str_category= categoryandPath.get(i).substring(0,categoryandPath.get(i).indexOf(":"));
-				//result[i] =(double) ((double)(int_tempPath*1000)/(double)(hmap_subCategoryCount.get(str_category).*depth));
+				result[i] =(double) ((double)(int_tempPath*1000)/(double)(hmap_subCategoryCount.get(str_category).get(depth-1)*depth));
 				
 				formatResult[i]=formatResult[i]+" "+ result[i];
-				//System.out.println(result[i]);
 			
 				System.out.printf("%.5f",result[i]);
 				
@@ -236,7 +236,7 @@ public class ReadResults
 			{
 				
 				arrListTemp= new ArrayList<>();
-				System.out.println(lineCategory);
+				//System.out.println(lineCategory);
 				subCount= (lineCategory.substring(lineCategory.indexOf(":,")+2, lineCategory.length()).split(","));
 				int_subCount= Arrays.stream(subCount).mapToInt(Integer::parseInt).toArray();
 				
@@ -251,7 +251,13 @@ public class ReadResults
 				}
 				
 				hmap_subCategoryCount.put(lineCategory.substring(0, lineCategory.indexOf(":")),arrListTemp);
-				arrListTemp.clear();
+				
+				
+//				for (int i = 0; i < hmap_subCategoryCount.get(lineCategory.substring(0, lineCategory.indexOf(":"))).size(); i++) 
+//				{
+//					System.out.print(" "+hmap_subCategoryCount.get(lineCategory.substring(0, lineCategory.indexOf(":"))).get(i));
+//				}
+				//arrListTemp.clear();
 			}
 		} 
 		catch (FileNotFoundException e) 
