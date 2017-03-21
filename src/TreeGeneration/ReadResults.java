@@ -5,10 +5,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 public class ReadResults 
@@ -19,11 +21,14 @@ public class ReadResults
 	static int numberOfSub=7;
 	private static int[] subCatCountInt;
 	static int index=0;
-
+	static String nameAndCat=null;
 	static String[] formatResult= new String[100];
 	static boolean flag=true; 
-	static ArrayList<Double> depth7Result = new  ArrayList<Double>();
+	static ArrayList<String> arrListResultsWCatName = new  ArrayList<String>();
 	private static final Map<String,ArrayList<Integer>> hmap_subCategoryCount = new HashMap<>();
+
+	private static final StringBuilder finalResult = new StringBuilder();
+	private static final Map<String,Map<Integer,List<String>>> finalResultMap = new HashMap<>();
 	
 	public static void ReadResultFromAllFile(String fileNAme)
 	{
@@ -70,6 +75,7 @@ public class ReadResults
 			{
 				hsetEntity.add(lineCategory);
 			}
+
 			String str= "pageLinkCleaned_OnlyCategoryFiltered_L5:";
 			System.out.println(str);
 			while ((line = br.readLine()) != null)
@@ -84,7 +90,9 @@ public class ReadResults
 //					{
 //						System.out.println(line);
 //						break;
-//					}
+//					}=SPLIT("Neil_Armstrong,Outer_space,Archaeology:2,0.00576",",")
+					//=SPLIT("Neil_Armstrong,Outer_space,Architecture:2,0.00311",",")
+
 					str_tempSplitedString= line.substring(line.indexOf(">-<Archaeology:"),line.length()-2);
 				
 					
@@ -147,42 +155,66 @@ public class ReadResults
 				//Entty&Cat
 				if (!line.contains("\"")&&line.contains(",")&&!line.contains("\",\"")) 
 				{
-					System.out.println(line);
+					finalResult.append("=SPLIT(\"").append(line).append(",");
+					finalResultMap.put(line, new HashMap<Integer,List<String>>());					
+					
 //					while(formatResult[i]!=null)
 //					{
 //						System.out.println(formatResult[i]);
 //						i++;
 //					}
+					for (int i = 0; i < formatResult.length; i++) 
+					{						
+						if (formatResult[i]!=null) 
+						{
+							System.out.println("=SPLIT(\""+formatResult[i]+"\",\",\")");
+						}
+					}
+					//System.out.println("---------------------------");
+					//System.out.println("=SPLIT(\""+line);
+					nameAndCat=line;
 					formatResult= new String[100];
 					index=0;
 					depth=numberOfSub;
+					arrListResultsWCatName.clear();
 					
 				}
 				else if (line.length()<1) 
 				{
 					//System.out.println();
 					//System.out.println("numberOfPaths "+ numberOfPaths+"depth: "+depth+" "+ subCatCountInt[depth-1]);
-					MyHeuristic(arrList_paths, depth);
+					MyHeuristic(arrList_paths, depth,line);
 					depth--;
 					index=0;
 					numberOfPaths.clear();
 					arrList_paths.clear();
+					arrListResultsWCatName.clear();
+					
+					
 				}
 				else
 				{
 					//System.out.println(" "+line);
 					if (line.contains(":")) 
 					{
+						arrListResultsWCatName.add(line);
 						arrList_paths.add(line);
 						numberOfPaths.add(Integer.parseInt(line.substring(line.indexOf(":")+1, line.length())));
-//						formatResult[index]=" "+formatResult[index]+line+" ";
-//						index++;
+						
+						if (formatResult[index]!=null) 
+						{
+							formatResult[index]=formatResult[index]+","+line+" ";
+						}
+						else
+						{
+							formatResult[index]=nameAndCat+line+" ";
+						}
+						
+						index++;
 					}
 					
 				}
 			}
-				
-
 		} catch (IOException e) {
 
 			e.printStackTrace();
@@ -190,7 +222,7 @@ public class ReadResults
 		} 
 
 	}
-	public static void MyHeuristic(ArrayList<String> categoryandPath,int depth)
+	public static void MyHeuristic(ArrayList<String> categoryandPath,int depth, String line)
 	{
 		double[] result = new double[categoryandPath.size()];
 		//numberOfPaths*1000/(den*depth)
@@ -206,13 +238,22 @@ public class ReadResults
 			
 			//formatResult[i]=formatResult[i]+" "+ result[i];
 		
-			System.out.printf("%.5f",result[i]);
-			
-			System.out.println();
+			//System.out.printf("%.5f",result[i]);
+			DecimalFormat df = new DecimalFormat("0.00000");
+			arrListResultsWCatName.set(i, arrListResultsWCatName.get(i)+","+df.format(result[i]));
+			formatResult[i]=formatResult[i]+","+ df.format(result[i]);
+			//System.out.println();
 		}
-		System.out.println();
+		//System.out.println();
 		
- 		
+		for (int i = 0; i < arrListResultsWCatName.size(); i++) 
+		{
+			//System.out.println(arrListResultsWCatName.get(i));
+			finalResult.append(arrListResultsWCatName.get(i)).append("\",\",\")\n");
+//			System.out.println(formatResult[i]);
+			
+		}
+		//System.out.println();
 		
 		index=0;
 	}
