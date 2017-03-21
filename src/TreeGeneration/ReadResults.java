@@ -147,19 +147,15 @@ public class ReadResults
 				//Entty&Cat
 				if (!line.contains("\"")&&line.contains(",")&&!line.contains("\",\"")) 
 				{
-					
-					int i=0;
+					System.out.println(line);
 //					while(formatResult[i]!=null)
 //					{
 //						System.out.println(formatResult[i]);
 //						i++;
 //					}
 					formatResult= new String[100];
+					index=0;
 					depth=numberOfSub;
-					
-					
-					//System.out.println(line);
-					
 					
 				}
 				else if (line.length()<1) 
@@ -168,7 +164,9 @@ public class ReadResults
 					//System.out.println("numberOfPaths "+ numberOfPaths+"depth: "+depth+" "+ subCatCountInt[depth-1]);
 					MyHeuristic(arrList_paths, depth);
 					depth--;
+					index=0;
 					numberOfPaths.clear();
+					arrList_paths.clear();
 				}
 				else
 				{
@@ -177,8 +175,8 @@ public class ReadResults
 					{
 						arrList_paths.add(line);
 						numberOfPaths.add(Integer.parseInt(line.substring(line.indexOf(":")+1, line.length())));
-						formatResult[index]=" "+formatResult[index]+line+" ";
-						index++;
+//						formatResult[index]=" "+formatResult[index]+line+" ";
+//						index++;
 					}
 					
 				}
@@ -199,25 +197,23 @@ public class ReadResults
 		
 		int int_tempPath=0;
 		String str_category=null;
-		if (depth==7) 
+		for (int i = 0; i < result.length; i++) 
 		{
-			for (int i = 0; i < result.length; i++) 
-			{
-				
-				int_tempPath= Integer.parseInt(categoryandPath.get(i).substring(categoryandPath.get(i).indexOf(":")+1, categoryandPath.get(i).length()));
-				str_category= categoryandPath.get(i).substring(0,categoryandPath.get(i).indexOf(":"));
-				result[i] =(double) ((double)(int_tempPath*1000)/(double)(hmap_subCategoryCount.get(str_category).get(depth-1)*depth));
-				
-				formatResult[i]=formatResult[i]+" "+ result[i];
 			
-				System.out.printf("%.5f",result[i]);
-				
-				System.out.println();
-			}
+			int_tempPath= Integer.parseInt(categoryandPath.get(i).substring(categoryandPath.get(i).indexOf(":")+1, categoryandPath.get(i).length()));
+			str_category= categoryandPath.get(i).substring(0,categoryandPath.get(i).indexOf(":"));
+			result[i] =(double) ((double)(int_tempPath*1000)/(double)(hmap_subCategoryCount.get(str_category).get(depth-1)*depth));
+			
+			//formatResult[i]=formatResult[i]+" "+ result[i];
+		
+			System.out.printf("%.5f",result[i]);
+			
 			System.out.println();
 		}
+		System.out.println();
+		
  		
-		//formatResult= null;
+		
 		index=0;
 	}
 	
@@ -239,12 +235,7 @@ public class ReadResults
 				//System.out.println(lineCategory);
 				subCount= (lineCategory.substring(lineCategory.indexOf(":,")+2, lineCategory.length()).split(","));
 				int_subCount= Arrays.stream(subCount).mapToInt(Integer::parseInt).toArray();
-				
-//				final HashSet<Integer> content = new HashSet<>();
-//				for (int i = 0; i < int_subCount.length; i++)					{
-//					//sCurrentLine = sCurrentLine.substring(sCurrentLine.indexOf("Category:"), sCurrentLine.length());
-//					content.add(int_subCount[i]);	
-//				}
+
 				for (int i = 0; i < int_subCount.length; i++)
 				{
 					arrListTemp.add(int_subCount[i]);
@@ -252,11 +243,6 @@ public class ReadResults
 				
 				hmap_subCategoryCount.put(lineCategory.substring(0, lineCategory.indexOf(":")),arrListTemp);
 				
-				
-//				for (int i = 0; i < hmap_subCategoryCount.get(lineCategory.substring(0, lineCategory.indexOf(":"))).size(); i++) 
-//				{
-//					System.out.print(" "+hmap_subCategoryCount.get(lineCategory.substring(0, lineCategory.indexOf(":"))).get(i));
-//				}
 				//arrListTemp.clear();
 			}
 		} 
@@ -272,9 +258,5 @@ public class ReadResults
 		
 	}
 	
-
-	
-	
-
 
 }
