@@ -23,7 +23,7 @@ public class Main {
 		//CreateWeightVectorString.main();
 		//String pathMainCategories= System.getProperty("user.dir") + File.separator+"MainCategoryFile.txt";
 		
-		//ReadResults.ReadResultFromAllFile("file_All");
+		//ReadResults.ReadResultFromAllFile("file_Chem");
 		ReadResults.ReadResultFromCVSFile("ResultsL6_sort.csv","SubCategory_Count.csv");
 	}
 }

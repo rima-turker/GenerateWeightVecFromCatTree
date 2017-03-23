@@ -39,7 +39,6 @@ public class ReadResults {
 	public static void ReadResultFromAllFile(String fileNAme) {
 
 		path += fileNAme;
-		String fileSkos = "EntitiesAndCategories6";
 		BufferedReader br = null;
 		FileReader fr = null;
 
@@ -80,7 +79,7 @@ public class ReadResults {
 				hsetEntity.add(lineCategory);
 			}
 
-			String str = "pageLinkCleaned_OnlyCategoryFiltered_L5:";
+			String str = "pageLinkCleaned_OnlyCategoryFiltered_L6:";
 			System.out.println(str);
 			while ((line = br.readLine()) != null) {
 
@@ -88,13 +87,7 @@ public class ReadResults {
 					line = line.substring(str.length(), line.length());
 
 					strEntityCategory = line.substring(0, line.indexOf(">-<Archaeology"));
-					// if (strEntityCategory.equals("Bill_Gates"))
-					// {
-					// System.out.println(line);
-					// break;
-					// }=SPLIT("Neil_Armstrong,Outer_space,Archaeology:2,0.00576",",")
-					// =SPLIT("Neil_Armstrong,Outer_space,Architecture:2,0.00311",",")
-
+					
 					str_tempSplitedString = line.substring(line.indexOf(">-<Archaeology:"), line.length() - 2);
 
 					if (hsetEntity.contains(strEntityCategory)) {
@@ -107,13 +100,12 @@ public class ReadResults {
 							}
 						}
 						System.out.println(strEntityCategory);
-						// counter++;
 					}
 
 				}
 			}
 
-			System.out.println(counter);
+			//System.out.println(counter);
 
 		} catch (IOException e) {
 
@@ -220,33 +212,25 @@ public class ReadResults {
 					categoryandPath.get(i).length()));
 			str_category = categoryandPath.get(i).substring(0, categoryandPath.get(i).indexOf(":"));
 			// result[i] =(double)
-			// ((double)(int_tempPath*1000)/(double)(hmap_subCategoryCount.get(str_category).get(depth-1)*depth));
-			result[i] = (double) ((double) (int_tempPath)
-					/ (double) (hmap_subCategoryCount.get(str_category).get(depth - 1) * depth));
+			result[i] =((double)(int_tempPath*100)/(double)(hmap_subCategoryCount.get(str_category).get(depth-1)*depth));
+//			result[i] = (double) ((double) (int_tempPath)
+//					/ (double) (hmap_subCategoryCount.get(str_category).get(depth - 1) * depth));
 
-			// arrListResultsWCatName.set(i, arrListResultsWCatName.get(i)+","+df.format(result[i]));
-			// formatResult[i]=formatResult[i]+","+ df.format(result[i]);
+			 arrListResultsWCatName.set(i, arrListResultsWCatName.get(i)+","+df.format(result[i]));
+			 formatResult[i]=formatResult[i]+","+ df.format(result[i]);
 		}
 		
-		if (result.length>0) 
-		{
-			double[] double_resultNormalized = NormalizeArray(result);
-			for (int i = 0; i < result.length; i++) 
-			{
-				arrListResultsWCatName.set(i, arrListResultsWCatName.get(i) + "," + df.format(double_resultNormalized[i]));
-				formatResult[i] = formatResult[i] + "," + df.format(double_resultNormalized[i]);
-			}
-		}
-
-		
-
-//		for (int i = 0; i < arrListResultsWCatName.size(); i++) {
-//			// System.out.println(arrListResultsWCatName.get(i));
-//			finalResult.append(arrListResultsWCatName.get(i)).append("\",\",\")\n");
-//			// System.out.println(formatResult[i]);
-//
+		//Normalize
+//		if (result.length>0) 
+//		{
+//			double[] double_resultNormalized = NormalizeArray(result);
+//			for (int i = 0; i < result.length; i++) 
+//			{
+//				arrListResultsWCatName.set(i, arrListResultsWCatName.get(i) + "," + df.format(double_resultNormalized[i]));
+//				formatResult[i] = formatResult[i] + "," + df.format(double_resultNormalized[i]);
+//			}
 //		}
-		// System.out.println();
+
 
 		index = 0;
 	}
@@ -269,20 +253,19 @@ public class ReadResults {
 				subCount = (lineCategory.substring(lineCategory.indexOf(":,") + 2, lineCategory.length()).split(","));
 				int_subCount = Arrays.stream(subCount).mapToInt(Integer::parseInt).toArray();
 
-				double_subCount = NormalizeArray(int_subCount);
 
-				// for (int i = 0; i < int_subCount.length; i++)
-				// {
-				// arrListTemp.add(int_subCount[i]);
-				// }
-
-				for (int i = 0; i < int_subCount.length; i++) {
-					arrListTemp.add(double_subCount[i]);
-				}
+				 for (int i = 0; i < int_subCount.length; i++)
+				 {
+					 arrListTemp.add((double)int_subCount[i]);
+				 }
+				
+				//Normalize
+//				double_subCount = NormalizeArray(int_subCount);
+//				for (int i = 0; i < int_subCount.length; i++) {
+//					arrListTemp.add(double_subCount[i]);
+//				}
 
 				hmap_subCategoryCount.put(lineCategory.substring(0, lineCategory.indexOf(":")), arrListTemp);
-
-				// arrListTemp.clear();
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -298,9 +281,16 @@ public class ReadResults {
 		double[] arrNormalized = new double[arr.length];
 		int min = getMin(arr);
 		int max = getMax(arr);
-
+		
+		if (arr.length<2) 
+		{
+			arrNormalized[0]=2.0;
+			return arrNormalized;
+		}
+		
 		for (int i = 0; i < arrNormalized.length; i++) {
-			arrNormalized[i] = (double) ((double) (arr[i] - min) / (double) (max - min));
+			//arrNormalized[i] = (double) ((double) (arr[i] - min) / (double) (max - min));
+			arrNormalized[i] = 1+((double) ((double) (arr[i] - min) / (double) (max - min)));
 		}
 
 		return arrNormalized;
@@ -313,12 +303,14 @@ public class ReadResults {
 
 		if (arr.length<2) 
 		{
-			arrNormalized[0]=1.0;
+			arrNormalized[0]=2.0;
 			return arrNormalized;
 		}
 		for (int i = 0; i < arrNormalized.length; i++) 
 		{
-			arrNormalized[i] = (double) ((double) (arr[i] - min) / (double) (max - min));
+			//arrNormalized[i] = (double) ((double) (arr[i] - min) / (double) (max - min));
+
+			arrNormalized[i] = 1+((double) ((double) (arr[i] - min) / (double) (max - min)));
 		}
 
 		return arrNormalized;
