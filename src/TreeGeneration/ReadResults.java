@@ -11,53 +11,48 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class ReadResults {
 	static String path = System.getProperty("user.dir") + File.separator;
-	static String path_FamEntities = System.getProperty("user.dir") + File.separator + "FamEntities.txt";
+	static String path_FamEntities = System.getProperty("user.dir") + File.separator;
 	static String path_SubCategoryCount = System.getProperty("user.dir") + File.separator;
 	static int numberOfSub = 7;
-	private static int[] subCatCountInt;
 	static int index = 0;
 	static String nameAndCat = null;
 	static String[] formatResult = new String[100];
 	static boolean flag = true;
 	static int levelOfTreeforEvaluation = 7;
 	static ArrayList<String> arrListResultsWCatName = new ArrayList<String>();
-	// private static final Map<String,ArrayList<Integer>> hmap_subCategoryCount
-	// = new HashMap<>();
+
 	private static final Map<String, ArrayList<Double>> hmap_subCategoryCount = new HashMap<>();
+	private static final LinkedHashMap<String, Map<Integer, List<String>>> hmap_entityCategoryCount = new LinkedHashMap<>();
 
-//	private static final StringBuilder finalResult = new StringBuilder();
-//	private static final Map<String, Map<Integer, List<String>>> finalResultMap = new HashMap<>();
+	//	private static final StringBuilder finalResult = new StringBuilder();
+	//	private static final Map<String, Map<Integer, List<String>>> finalResultMap = new HashMap<>();
 
-	public static void ReadResultFromAllFile(String fileNAme) {
+	public static void ReadResultFromAllFile(String fileName,String famEntities) {
 
-		path += fileNAme;
+		path += fileName;
+		path_FamEntities+=famEntities;
+
 		BufferedReader br = null;
-		FileReader fr = null;
 
 		BufferedReader br_FamEntities = null;
-		FileReader fr_FamEntities = null;
 
 		try {
 
-			fr = new FileReader(path);
-			br = new BufferedReader(fr);
 
-			fr_FamEntities = new FileReader(path_FamEntities);
-			br_FamEntities = new BufferedReader(fr_FamEntities);
-
-			String line = null;
-			// String tempEntityCategory=null;
-			br = new BufferedReader(new FileReader(path));
 			br_FamEntities = new BufferedReader(new FileReader(path_FamEntities));
 
+			String line = null;
 			// File log = new File(fileSkos+".txt");
 			// if(!log.exists())
 			// {
@@ -65,49 +60,160 @@ public class ReadResults {
 			// }
 			// FileWriter fileWriter = new FileWriter(log, true);
 			// BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-			HashSet<String> hsetEntity = new HashSet<>();
+			LinkedHashSet<String> hsetEntity = new LinkedHashSet<>();
 			int counter = 0;
 			String strEntityCategory = null;
-			String str_tempSplitedString;
+			String str_tempSplitedString=null;
 			String[] str_SplitedString;
 
 			String lineCategory;
 
 			int count = 0;
 
-			while ((lineCategory = br_FamEntities.readLine()) != null) {
+			while ((lineCategory = br_FamEntities.readLine()) != null) 
+			{
 				hsetEntity.add(lineCategory);
 			}
 
-			String str = "pageLinkCleaned_OnlyCategoryFiltered_L6:";
-			System.out.println(str);
-			while ((line = br.readLine()) != null) {
+			String str = "pageLinkCleaned_OnlyCategoryFiltered_L";
+			Integer level = null;
 
-				if (line.contains(str)) {
-					line = line.substring(str.length(), line.length());
+			for (String entityAndCat : hsetEntity) 
+			{
+				
+				String entity= entityAndCat.substring(0, entityAndCat.indexOf(","));
+				
+				HashMap<Integer, List<String>> hmap_TempCatCount = new HashMap<>();
 
-					strEntityCategory = line.substring(0, line.indexOf(">-<Archaeology"));
-					
-					str_tempSplitedString = line.substring(line.indexOf(">-<Archaeology:"), line.length() - 2);
 
-					if (hsetEntity.contains(strEntityCategory)) {
-						str_SplitedString = str_tempSplitedString.split(",");
+				br = new BufferedReader(new FileReader(path));
 
-						for (int i = 0; i < str_SplitedString.length; i++) {
-							if (Integer.parseInt(str_SplitedString[i].substring(str_SplitedString[i].indexOf(":") + 1,
-									str_SplitedString[i].length())) > 0) {
-								strEntityCategory += str_SplitedString[i];
+				while ((line = br.readLine()) != null) 
+				{
+					List<String> list_TempCatCount = new ArrayList<>();
+					if (line.contains(":"+entity+">-<"))
+					{
+						if (line.contains(str)) 
+						{
+							level= Integer.parseInt(line.substring(str.length(),str.length()+1));
+							
+							str_tempSplitedString = line.substring(line.indexOf("Archaeology:"), line.length() - 2);
+							str_tempSplitedString.replace(">-<", "");
+							
+							str_SplitedString = str_tempSplitedString.split(",");
+
+							for (int i = 0; i < str_SplitedString.length; i++) 
+							{
+								if (Integer.parseInt(str_SplitedString[i].substring(str_SplitedString[i].indexOf(":") + 1,
+										str_SplitedString[i].length())) > 0) 
+								{
+									strEntityCategory += str_SplitedString[i];
+									list_TempCatCount.add(str_SplitedString[i]);
+								}
 							}
-						}
-						System.out.println(strEntityCategory);
-					}
 
+							hmap_TempCatCount.put(level, list_TempCatCount);
+						}
+					}
 				}
+				hmap_entityCategoryCount.put(entity, hmap_TempCatCount);
+				br.close();
+			}
+			
+			for(Entry<String, Map<Integer, List<String>>> entry: hmap_entityCategoryCount.entrySet())
+			{
+				String[] arr_StringPrint = new String[7];
+				
+				String entityName = entry.getKey();
+				
+				for (String entityAndCat : hsetEntity) 
+				{
+					if (entityAndCat.contains(entityName)) 
+					{
+						System.out.println(entityAndCat);
+					}
+				}
+//				System.out.println(entityName);
+				level = -1;
+				List<String> list = null;
+				
+				for (int i = 6; i >=0; i--) 
+				{
+					
+					List<String> list2 = entry.getValue().get(i);
+					if (list2!=null) 
+					{
+						for (int j = 0; j < list2.size(); j++) 
+						{
+							System.out.println(list2.get(j));
+						}
+					}
+					else
+					{
+						System.out.println("-");
+					}
+					if (i!=0) 
+					{
+						System.out.println();
+					}
+					
+				}
+//				for(Entry<Integer, List<String>> map: entry.getValue().entrySet())
+//				{
+//					level = map.getKey();
+//					list = map.getValue();
+//					
+//					//System.err.println(entityName+"\t"+level+"\t"+list.toString());	
+//					System.out.println(level+1);
+//					for (int i = 0; i < list.size(); i++) 
+//					{
+//						System.out.println(list.get(i));
+//					}
+//				}
+				//System.out.println("----------------------------------------");
+			}
+			
+			
+			for (Integer j = 0; j < 7; j++) 
+			{
+
+				br = new BufferedReader(new FileReader(path));
+
+				str+=j.toString()+":";
+			
+				
+				while ((line = br.readLine()) != null) {
+
+					if (line.contains(str)) {
+						line = line.substring(str.length(), line.length());
+
+						strEntityCategory = line.substring(0, line.indexOf(">-<Archaeology"));
+
+						//System.out.println(strEntityCategory);
+
+						str_tempSplitedString = line.substring(line.indexOf(">-<Archaeology:"), line.length() - 2);
+
+						if (hsetEntity.contains(strEntityCategory)) {
+							str_SplitedString = str_tempSplitedString.split(",");
+
+							for (int i = 0; i < str_SplitedString.length; i++) {
+								if (Integer.parseInt(str_SplitedString[i].substring(str_SplitedString[i].indexOf(":") + 1,
+										str_SplitedString[i].length())) > 0) {
+									strEntityCategory += str_SplitedString[i];
+								}
+							}
+							System.out.println(strEntityCategory);
+						}
+
+					}
+				}
+				br.close();
 			}
 
 			//System.out.println(counter);
 
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 
 			e.printStackTrace();
 
@@ -116,64 +222,65 @@ public class ReadResults {
 
 	public static void ReadResultFromCVSFile(String fileNAme, String subCatCount) {
 		ReadSubCategoryNumber(subCatCount);
-
+		
+		flag=false;
+		
 		path += fileNAme;
 
 		try (BufferedReader br = new BufferedReader(new FileReader(path));){
 
-			
+
 			String line = null;
 			int depth = numberOfSub;
 
 			ArrayList<String> arrList_paths = new ArrayList<>();
 
-			subCatCountInt = null;
 			ArrayList<Integer> numberOfPaths = new ArrayList<>();
 
 			while ((line = br.readLine()) != null) {
 				// Entty&Cat
 				if (!line.contains("\"") && line.contains(",") && !line.contains("\",\"")) {
-//					finalResult.append("=SPLIT(\"").append(line).append(",");
-//					finalResultMap.put(line, new HashMap<Integer, List<String>>());
+					//					finalResult.append("=SPLIT(\"").append(line).append(",");
+					//					finalResultMap.put(line, new HashMap<Integer, List<String>>());
 
-					// while(formatResult[i]!=null)
-					// {
-					// System.out.println(formatResult[i]);
-					// i++;
-					// }
-					for (int i = 0; i < formatResult.length; i++) {
-						if (formatResult[i] != null) {
-
-							for (int j = 0; j < (levelOfTreeforEvaluation * 2)
-									- StringUtils.countMatches(formatResult[i], ","); j++) {
-								formatResult[i] += ",-";
-							}
-							System.out.println("=SPLIT(\"" + formatResult[i] + "\",\",\")");
-						}
-					}
-					// System.out.println("---------------------------");
-					// System.out.println("=SPLIT(\""+line);
+					
+//					for (int i = 0; i < formatResult.length; i++) {
+//						if (formatResult[i] != null) {
+//
+//							for (int j = 0; j < (levelOfTreeforEvaluation * 2)
+//									- StringUtils.countMatches(formatResult[i], ","); j++) {
+//								formatResult[i] += ",-";
+//							}
+//							System.out.println("=SPLIT(\"" + formatResult[i] + "\",\",\")");
+//						}
+//					}
+					//System.out.println(depth);
 					nameAndCat = line;
-					formatResult = new String[100];
-					index = 0;
-					depth = numberOfSub;
-					arrListResultsWCatName.clear();
+					
+//					formatResult = new String[100];
+//					index = 0;
+//					depth = numberOfSub;
+//					arrListResultsWCatName.clear();
 
-				} else if (line.length() < 1) {
+				} 
+				else if (line.length() < 1) {
 					// System.out.println();
 					// System.out.println("numberOfPaths "+
 					// numberOfPaths+"depth: "+depth+" "+
 					// subCatCountInt[depth-1]);
 					MyHeuristic(arrList_paths, depth, line);
+					
 					depth--;
 					index = 0;
 					numberOfPaths.clear();
 					arrList_paths.clear();
 					arrListResultsWCatName.clear();
 
-				} else {
+				} 
+				else {
 					// System.out.println(" "+line);
-					if (line.contains(":")) {
+					if (line.contains(":")) 
+					{
 						arrListResultsWCatName.add(line);
 						arrList_paths.add(line);
 						numberOfPaths.add(Integer.parseInt(line.substring(line.indexOf(":") + 1, line.length())));
@@ -189,6 +296,17 @@ public class ReadResults {
 					}
 
 				}
+				if (depth==1)
+				{
+					printResults();
+					formatResult = new String[100];
+					index = 0;
+					depth = numberOfSub;
+					arrListResultsWCatName.clear();
+				}
+				//printResults();
+				
+				
 			}
 		} catch (IOException e) {
 
@@ -197,7 +315,19 @@ public class ReadResults {
 		}
 
 	}
+	public static void printResults()
+	{
+		for (int i = 0; i < formatResult.length; i++) {
+			if (formatResult[i] != null) {
 
+				for (int j = 0; j < (levelOfTreeforEvaluation * 2)
+						- StringUtils.countMatches(formatResult[i], ","); j++) {
+					formatResult[i] += ",-";
+				}
+				System.out.println("=SPLIT(\"" + formatResult[i] + "\",\",\")");
+			}
+		}
+	}
 	public static void MyHeuristic(ArrayList<String> categoryandPath, int depth, String line) {
 		double[] result = new double[categoryandPath.size()];
 		// numberOfPaths*1000/(den*depth)
@@ -212,24 +342,23 @@ public class ReadResults {
 					categoryandPath.get(i).length()));
 			str_category = categoryandPath.get(i).substring(0, categoryandPath.get(i).indexOf(":"));
 			// result[i] =(double)
-			result[i] =((double)(int_tempPath*100)/(double)(hmap_subCategoryCount.get(str_category).get(depth-1)*depth));
-//			result[i] = (double) ((double) (int_tempPath)
-//					/ (double) (hmap_subCategoryCount.get(str_category).get(depth - 1) * depth));
+			result[i] =((double)((double)int_tempPath*100)/(double)(hmap_subCategoryCount.get(str_category).get(depth-1)*depth));
+			//			result[i] = (double)((double)(int_tempPath)/(double)(hmap_subCategoryCount.get(str_category).get(depth - 1) * depth));
 
-			 arrListResultsWCatName.set(i, arrListResultsWCatName.get(i)+","+df.format(result[i]));
-			 formatResult[i]=formatResult[i]+","+ df.format(result[i]);
+			arrListResultsWCatName.set(i, arrListResultsWCatName.get(i)+","+df.format(result[i]));
+			formatResult[i]=formatResult[i]+","+ df.format(result[i]);
 		}
-		
+
 		//Normalize
-//		if (result.length>0) 
-//		{
-//			double[] double_resultNormalized = NormalizeArray(result);
-//			for (int i = 0; i < result.length; i++) 
-//			{
-//				arrListResultsWCatName.set(i, arrListResultsWCatName.get(i) + "," + df.format(double_resultNormalized[i]));
-//				formatResult[i] = formatResult[i] + "," + df.format(double_resultNormalized[i]);
-//			}
-//		}
+		//		if (result.length>0) 
+		//		{
+		//			double[] double_resultNormalized = NormalizeArray(result);
+		//			for (int i = 0; i < result.length; i++) 
+		//			{
+		//				arrListResultsWCatName.set(i, arrListResultsWCatName.get(i) + "," + df.format(double_resultNormalized[i]));
+		//				formatResult[i] = formatResult[i] + "," + df.format(double_resultNormalized[i]);
+		//			}
+		//		}
 
 
 		index = 0;
@@ -254,16 +383,16 @@ public class ReadResults {
 				int_subCount = Arrays.stream(subCount).mapToInt(Integer::parseInt).toArray();
 
 
-				 for (int i = 0; i < int_subCount.length; i++)
-				 {
-					 arrListTemp.add((double)int_subCount[i]);
-				 }
-				
+				for (int i = 0; i < int_subCount.length; i++)
+				{
+					arrListTemp.add((double)int_subCount[i]);
+				}
+
 				//Normalize
-//				double_subCount = NormalizeArray(int_subCount);
-//				for (int i = 0; i < int_subCount.length; i++) {
-//					arrListTemp.add(double_subCount[i]);
-//				}
+				//				double_subCount = NormalizeArray(int_subCount);
+				//				for (int i = 0; i < int_subCount.length; i++) {
+				//					arrListTemp.add(double_subCount[i]);
+				//				}
 
 				hmap_subCategoryCount.put(lineCategory.substring(0, lineCategory.indexOf(":")), arrListTemp);
 			}
@@ -281,13 +410,13 @@ public class ReadResults {
 		double[] arrNormalized = new double[arr.length];
 		int min = getMin(arr);
 		int max = getMax(arr);
-		
+
 		if (arr.length<2) 
 		{
 			arrNormalized[0]=2.0;
 			return arrNormalized;
 		}
-		
+
 		for (int i = 0; i < arrNormalized.length; i++) {
 			//arrNormalized[i] = (double) ((double) (arr[i] - min) / (double) (max - min));
 			arrNormalized[i] = 1+((double) ((double) (arr[i] - min) / (double) (max - min)));
