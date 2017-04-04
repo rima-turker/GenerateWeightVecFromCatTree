@@ -14,7 +14,7 @@ import java.util.LinkedList;
 
 import org.apache.commons.lang.StringUtils;
 
-public class CalculatePrecisionAndRecall 
+public class CalculatePrecisionAndRecall__ 
 {
 	static String path = System.getProperty("user.dir") + File.separator;
 	static Integer int_treeDepth=7;
