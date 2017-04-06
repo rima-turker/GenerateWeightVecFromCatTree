@@ -1,9 +1,11 @@
 package TreeGeneration;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -34,9 +36,6 @@ public class ReadResults {
 
 	private static final Map<String, ArrayList<Double>> hmap_subCategoryCount = new HashMap<>();
 	private static final LinkedHashMap<String, Map<Integer, List<String>>> hmap_entityCategoryCount = new LinkedHashMap<>();
-
-	//	private static final StringBuilder finalResult = new StringBuilder();
-	//	private static final Map<String, Map<Integer, List<String>>> finalResultMap = new HashMap<>();
 
 	public static void ReadResultFromAllFile(String fileName,String famEntities) {
 
@@ -299,14 +298,12 @@ public class ReadResults {
 				if (depth==1)
 				{
 					printResults();
+					
 					formatResult = new String[100];
 					index = 0;
 					depth = numberOfSub;
 					arrListResultsWCatName.clear();
 				}
-				//printResults();
-				
-				
 			}
 		} catch (IOException e) {
 
@@ -315,9 +312,21 @@ public class ReadResults {
 		}
 
 	}
-	public static void printResults()
+	public static void printResults() throws IOException
 	{
-		for (int i = 0; i < formatResult.length; i++) {
+		File log = new File(System.getProperty("user.dir")+"temp_FormatedResults");
+		
+		if (!log.exists()) 
+		{
+			log.createNewFile();
+			
+		}
+		FileWriter fileWriter = new FileWriter(log,true);
+		BufferedWriter bf_Writer = new BufferedWriter(fileWriter);
+		
+		
+		for (int i = 0; i < formatResult.length; i++) 
+		{
 			if (formatResult[i] != null) {
 
 				for (int j = 0; j < (levelOfTreeforEvaluation * 2)
@@ -325,8 +334,12 @@ public class ReadResults {
 					formatResult[i] += ",-";
 				}
 				System.out.println("=SPLIT(\"" + formatResult[i] + "\",\",\")");
+				bf_Writer.write("=SPLIT(\"" + formatResult[i] + "\",\",\")");
+				bf_Writer.newLine();
 			}
 		}
+		bf_Writer.newLine();
+		bf_Writer.close();
 	}
 	public static void MyHeuristic(ArrayList<String> categoryandPath, int depth, String line) {
 		double[] result = new double[categoryandPath.size()];
@@ -344,6 +357,7 @@ public class ReadResults {
 			// result[i] =(double)
 			result[i] =((double)((double)int_tempPath*100)/(double)(hmap_subCategoryCount.get(str_category).get(depth-1)*depth));
 			//			result[i] = (double)((double)(int_tempPath)/(double)(hmap_subCategoryCount.get(str_category).get(depth - 1) * depth));
+			//result[i] =((double)((double)int_tempPath)/(double)(depth));
 
 			arrListResultsWCatName.set(i, arrListResultsWCatName.get(i)+","+df.format(result[i]));
 			formatResult[i]=formatResult[i]+","+ df.format(result[i]);

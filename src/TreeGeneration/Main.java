@@ -10,10 +10,13 @@ public class Main {
 	 * @throws IOException 
 	 */
 	
-	
+	final static String str_ExampleNo="3";
 	
 	public static void main(String[] args) throws IOException 
 	{
+		CalculatePrecisionAndRecall.main("GoalSet_AllCombined.tsv","Results_All_L7",0.0);
+		
+		
 //		ReadResults.ReadResultFromAllFile("Example_2"+File.separator+"file_David",
 //				"Example_2"+File.separator+"FamEntitiesAnCat_2 (copy)");
 		//GenerateLevelTrees_2.main();
@@ -28,15 +31,17 @@ public class Main {
 		
 		//FamEntities_2.txt
 		//ReadResults.ReadResultFromCVSFile("ResultsL6_sort.csv","SubCategory_Count.csv");
-		ReadResults.ReadResultFromCVSFile("Example_2"+File.separator+"ResultsL7.csv","SubCategory_Count.csv");
+		//ReadResults.ReadResultFromCVSFile("Example_2"+File.separator+"ResultsL7.csv","SubCategory_Count.csv");
 		
 //		ReadResults.ReadResultFromAllFile("Example_3"+File.separator+"FamEntitiesAndCats_3_Result_L7",
 //		"Example_3"+File.separator+"EntityCategory_Famous_3.csv");
 		
-		//ReadResults.ReadResultFromCVSFile("Example_3"+File.separator+"EntityCate_Results_3_L7","SubCategory_Count.csv");
-		//CalculatePrecisionAndRecall.main("Example_3"+File.separator+"PrecisionRecall_Example_3.csv");
-		//CalculatePrecisionAndRecall.MergeTwoFromatedResultFiles(new File("temp_FormatedResults"), new File("temp_PrecisionAndRecall"));
 		
+		
+//		ReadResults.ReadResultFromCVSFile("Example_"+str_ExampleNo+File.separator+"ResultsL7_Ex"+str_ExampleNo+".csv","SubCategory_Count.csv");
+//		CalculatePrecisionAndRecall.main("Example_"+str_ExampleNo+File.separator+"GoalSet_Example_"+str_ExampleNo+"_Mary.csv");
+//		CalculatePrecisionAndRecall.MergeTwoFromatedResultFiles(new File("Example_"+str_ExampleNo+File.separator+"ResultsL7_Ex"+str_ExampleNo+".csv_splitResults"), 
+//											new File("Example_"+str_ExampleNo+File.separator+"GoalSet_Example_"+str_ExampleNo+"_Mary.csv_PAndR"));
 		
 	}
-}
+}											
