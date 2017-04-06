@@ -37,6 +37,12 @@ public class CalculatePrecisionAndRecall {
 	static Map<String, LinkedHashMap<String, Double>> hmap_heuResultThresholdFiltered = new LinkedHashMap<>();
 	private static final Map<String, LinkedHashMap<String, Double>> hmap_precisionRecallFmeasure = new LinkedHashMap<>();
 
+	enum HuristicType {		
+		NO_HURISTIC,
+		NUMBEROFPATHS_HURISTIC,
+		NUMBEROFPATHSANDSUBCAT__HURISTIC;
+		
+	}
 	public static void main(String str_fileNameGroundTruthList,String str_fileNameTestSet,Double db_threshold) 
 	{
 		InitializeGroundTruthAndList(str_fileNameGroundTruthList);
@@ -46,8 +52,8 @@ public class CalculatePrecisionAndRecall {
 		printMap(log_testSet,hmap_testSet);
 		
 		threshold = db_threshold;
-
-		CallHeuristic(hmap_testSet);
+		
+		CallHeuristic(hmap_testSet,HuristicType.NO_HURISTIC);
 		CompareResultsWithGroundTruth(hmap_groundTruth,hmap_heuResult);
 		CallCalculatePrecisionAndRecall();
 		//printMap(log_testSet,hmap_testSet);
@@ -278,6 +284,18 @@ public class CalculatePrecisionAndRecall {
 			e.printStackTrace();
 
 		}
+		
+		for (Integer i = 1; i <=7; i++) 
+		{
+			for(Entry<String, String> entry: hmap_groundTruth.entrySet()) 
+			{
+				if (!hmap_testSet.containsKey(entry.getKey()+str_depthSeparator+i.toString())) 
+				{
+					System.out.println(entry);
+				}
+			}
+		}
+		
 	}
 
 	public static void SortHeuristicResults(LinkedHashMap<String, LinkedHashMap<String, Double>> hmap)
@@ -288,7 +306,7 @@ public class CalculatePrecisionAndRecall {
 			hmap_heuResult.put(entry.getKey(), temp);
 		}
 	}
-	public static void CallHeuristic(LinkedHashMap<String, LinkedHashMap<String, Double>> hmap_testSet) 
+	public static void CallHeuristic(LinkedHashMap<String, LinkedHashMap<String, Double>> hmap_testSet, HuristicType enum_heuType) 
 	{
 		LinkedHashMap<String, LinkedHashMap<String, Double>> hmap_tempResults = new LinkedHashMap<>();
 
@@ -302,7 +320,20 @@ public class CalculatePrecisionAndRecall {
 			{
 				String str_catName = entry_hmapValues.getKey();
 				Double db_value =entry_hmapValues.getValue();
-				Double db_heuValue = Heuristic_NumberOfPaths(db_value);
+				Double db_heuValue =0.0;
+				if (enum_heuType.equals(HuristicType.NO_HURISTIC)) 
+				{
+					 db_heuValue = Heuristic_NanHeuristic(db_value);
+				}
+				else if (enum_heuType.equals(HuristicType.NUMBEROFPATHS_HURISTIC)) 
+				{
+					 db_heuValue = Heuristic_NumberOfPaths(db_value);
+				}
+				else if (enum_heuType.equals(HuristicType.NUMBEROFPATHSANDSUBCAT__HURISTIC)) 
+				{
+					// db_heuValue = Heuristic_NumberOfPaths(db_value);
+				}
+				
 				hmap_Values.put(str_catName, db_heuValue);
 				//System.err.println(str_entityName);
 			}
@@ -334,6 +365,10 @@ public class CalculatePrecisionAndRecall {
 			hmap_heuResultThresholdFiltered.put(str_entityName, hmap_catAndValFiletered);
 		}
 	}
+	private static double Heuristic_NanHeuristic(double db_Value)
+	{
+		return 1.0;
+	}
 	private static double Heuristic_NumberOfPaths(double db_Value)
 	{
 		return db_Value;
@@ -351,11 +386,10 @@ public class CalculatePrecisionAndRecall {
 			Map<String, LinkedHashMap<String, Double>> hmap_hResults)
 	{
 		int[] arr_FoundDepth = new int[int_depthOfTheTree];
-		int count=0;
 		int count_Cat=0;
+		int count_NotFoundCat =0;
 		for(Entry<String, String> entry: hmap_GTruth.entrySet()) 
 		{
-			count++;
 			String str_entity = entry.getKey();
 			String str_category = entry.getValue();
 
@@ -387,8 +421,10 @@ public class CalculatePrecisionAndRecall {
 				}
 				
 			}
-			if (!changed){
+			if (!changed)
+			{
 				System.out.println("XXXXXXXXXXX "+str_entity);
+				count_NotFoundCat++;
 			}
 
 		}
@@ -397,12 +433,13 @@ public class CalculatePrecisionAndRecall {
 //		System.out.println(count_Cat);
 		for (int i = 0; i < arr_FoundDepth.length; i++) 
 		{
-			System.out.println("Depth"+(i)+":" +arr_FoundDepth[i]);
+			System.out.println("Depth"+(i+1)+":" +arr_FoundDepth[i]);
 		}
 		
 		System.out.println("Entity Count: "+ hmap_GTruth.size());
-		System.out.println("Test Entity Count: "+ hmap_testSet.size());
+		//System.out.println("Test Entity Count: "+ hmap_testSet.size());
 		System.out.println("Total Found Category Number: "+ count_Cat );
+		System.out.println("Total NOT Found Category Number: "+ count_NotFoundCat );
 	}
 	
 	public static void printMap(Logger log, Map mp) {
