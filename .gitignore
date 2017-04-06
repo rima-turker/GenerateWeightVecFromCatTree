@@ -5,5 +5,4 @@
 *.zip
 *.txt
 /bin/TreeGeneration/*.class
-/bin/*
 /*.csv
