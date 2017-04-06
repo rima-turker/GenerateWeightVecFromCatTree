@@ -1,0 +1,103 @@
+Entity	Blog Category	Combined Ground Truth			
+Anne_Claude_de_Caylus	Archaeology	Politics	Arts		
+Gertrude_Caton_Thompson	Archaeology				
+Howard_Carter	Archaeology	History			
+Vladimir_Shukhov	Architecture	Engineering	Inventions		
+Leo_von_Klenze	Architecture	Arts			
+Walter_Gropius	Architecture	Arts			
+Leonardo_da_Vinci	Arts	Engineering	Inventions		
+Jacques-Louis_David	Arts	History			
+Josiah_Wedgwood	Arts	Engineering			
+George_Ellery_Hale	Astronomy	Outer_space			
+John_Couch_Adams	Astronomy	Mathematics			
+Galileo_Galilei	Astronomy	physics	mathematics	history	Engineering
+Robert_Esnault-Pelterie	Aviation	Outer_space	Engineering		
+Ernst_Heinkel	Aviation	Engineering	Transport	Politics	Economics
+Wright_brothers	Aviation	Inventions	Transport	Engineering	
+Julius_Richard_Petri	Biology				
+Marcello_Malpighi	Biology	Medicine			
+Charles_Darwin	Biology	Botany			
+Catherine_Furbish	Botany				
+Henry_Nicholas_Ridley	Botany				
+Rembert_Dodoens	Botany	Biology			
+John_Reith_1st_Baron_Reith	Broadcasting	Communication	politics		
+David_Attenborough	Broadcasting	Communication			
+Jimmy_Fallon	Broadcasting	Arts	Communication	Music	
+Victor_Goldschmidt	Chemistry	Geology			
+Herbert_Henry_Dow	Chemistry	Inventions	engineering	economics	
+Antoine_Lavoisier	Chemistry				
+Marius_Sestier	Cinematography				
+William_Kennedy_Dickson	Cinematography	Inventions	Engineering		
+Billy_Wilder	Cinematography	Arts	Broadcasting		
+Short_Message_Service	Communication	Broadcasting			
+Mihajlo_Pupin	Communication	Engineering	Inventions	Physics	
+Alexander_Graham_Bell	Communication	Engineering	Inventions		
+Bill_Gates	Computer_science	Inventions	Economics	Engineering	
+Steve_Jobs	Economics	Inventions	Arts		
+Donald_Knuth	Computer_science	Mathematics			
+John_Maynard_Keynes	Economics	mathematics	politics		
+Oskar_Morgenstern	Economics	mathematics			
+Thomas_Robert_Malthus	Economics	Politics			
+Hideo_Shima	Engineering	Transport			
+Alexandre_Darracq	Engineering	Transport			
+Karl_Benz	Engineering	Inventions	Transport	economics	
+Fabian_Gottlieb_von_Bellingshausen	Exploration				
+Amerigo_Vespucci	Exploration				
+Gustav_Nachtigal	Exploration	politics			
+Charles_Lapworth	Geology				
+Arthur_Holmes	Geology				
+James_Hutton	Geology	medicine			
+Anna_Komnene	History	Politics	medicine		
+Joseph_Justus_Scaliger	History	Medicine	philosophy		
+Herodotus	History	Literature			
+George_Eastman	Inventions	Photography	Engineering		
+Thomas_Edison	Inventions	Engineering			
+Anne_Frank	Literature	History	Politics		
+Nikolai_Gogol	Literature				
+Alexandre_Dumas	Literature	Arts			
+Felix_Klein	Mathematics				
+George_David_Birkhoff	Mathematics				
+Kurt_Gödel	Mathematics	Philosophy			
+Dorothea_Erxleben	Medicine	Politics	Women_scientists		
+Elizabeth_Blackwell	Medicine	Women_scientists			
+Christiaan_Barnard	Medicine				
+Wolfgang_Amadeus_Mozart	Music				
+Gustav_Mahler	Music				
+Ludwig_van_Beethoven	Music				
+Neil_Armstrong	Outer_space	Aviation	Engineering		
+Michael_Collins_(astronaut)	Outer_space	Aviation			
+Valentin_Glushko	Outer_space	Aviation	Engineering		
+Richard_Owen	Paleontology	biology			
+Louis_Dollo	Paleontology	biology			
+Gideon_Mantell	Paleontology	Geology	biology		
+Super_Mario	Electronic_games				
+Atari	Electronic_games		economics		
+World_of_Warcraft	Electronic_games				
+Socrates	Philosophy	Literature	History	politics	
+Friedrich_Eduard_Beneke	Philosophy	psychology			
+Plato	Philosophy	Literature	Politics		
+August_Sander	Photography	Arts			
+August_Sander	Photography				
+Nadar_(photographer)	Photography	Arts			
+Albert_Einstein	Physics	mathematics	astronomy		
+Julian_Schwinger	Physics				
+Stephen_Hawking	Physics	Mathematics	Astronomy	Outer_space	
+William_Shakespeare	Poetry	Literature			
+Friedrich_Hölderlin	Poetry				
+Samuel_Taylor_Coleridge	Poetry	Literature	philosophy		
+Peter_the_Great	Politics				
+Sugar_Act	Politics	Economics	History		
+Angela_Merkel	Politics				
+Ottmar_Mergenthaler	Printing	Inventions	engineering		
+Alois_Senefelder	Printing	Inventions	engineering		
+Gutenberg_Bible	Printing	Literature	history		
+Frederic_Bartlett	Psychology				
+Sigmund_Freud	Psychology	Medicine	Philosophy		
+William_Wilson	Transport	engineering			
+Tower_Subway	Transport				
+Alice_Huyler_Ramsey	Transport	Communication			
+Florence_R._Sabin	Medicine	Women_scientists			
+Irene_Joliot-Curie	Chemistry	Physics	Women_scientists		
+Grace_Hopper	Computer_science	Women_scientists	Inventions		
+Carl_Hagenbeck	Zoology				
+Rudolf_Leuckart	Zoology	biology			
