@@ -2,68 +2,120 @@ package TreeGeneration;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
 public class CalculatePrecisionAndRecall {
 	
-	private static final Logger LOG = Logger.getLogger(CalculatePrecisionAndRecall.class.getCanonicalName());
-	private static final Logger log_testSet = Logger.getLogger("debugLogger");
-	private static final Logger log_heuResult = Logger.getLogger("reportsLogger");
-
 	static String str_path = System.getProperty("user.dir") + File.separator;
 	static int int_depthOfTheTree = 7;
 	static String str_depthSeparator = "__";
+	private static double threshold= 0;
+	
+	private static final Logger LOG = Logger.getLogger(CalculatePrecisionAndRecall.class.getCanonicalName());
+	private static final Logger log_testSet = Logger.getLogger("debugLogger");
+	private static final Logger log_heuResult = Logger.getLogger("reportsLogger");
+	
+	private static final Map<String, ArrayList<Double>> hmap_subCategoryCount = new HashMap<>();
 	private static final HashMap<String, String> hmap_groundTruth = new LinkedHashMap<>();
 	private static final LinkedHashMap<String, LinkedHashMap<String, Double>> hmap_testSet = new LinkedHashMap<>();
 	private static final Map<String, LinkedList<String>> hmap_groundTruthlist = new LinkedHashMap<>();
-	private static final Map<String, LinkedHashMap<String, Double>> hmap_heuResult = new LinkedHashMap<>();
-	private static double threshold= 0;
 	
-	static Map<String, LinkedHashMap<String, Double>> hmap_heuResultThresholdFiltered = new LinkedHashMap<>();
+	private static final Map<String, LinkedHashMap<String, Double>> hmap_heuResult = new LinkedHashMap<>();
+	private static final Map<String, LinkedHashMap<String, Double>> hmap_heuResultNormalized = new LinkedHashMap<>();
+	private static final Map<String, LinkedHashMap<String, Double>> hmap_heuResultNormalizedSorted = new LinkedHashMap<>();
+	private static final Map<String, LinkedHashMap<String, Double>> hmap_heuResultNormalizedSortedFiltered = new LinkedHashMap<>();
+	private static final HashSet<Double> hset_ValuesToNormalize = new HashSet<>();
+	private static final Map<Double,Double> hmap_NormalizationMap = new HashMap<>();
 	private static final Map<String, LinkedHashMap<String, Double>> hmap_precisionRecallFmeasure = new LinkedHashMap<>();
 
-	enum HuristicType {		
-		NO_HURISTIC,
-		NUMBEROFPATHS_HURISTIC,
-		NUMBEROFPATHSANDSUBCAT__HURISTIC;
+	enum HeuristicType 
+	{		
+		HEURISTIC_NO,
+		HEURISTIC_NUMBEROFPATHS,
+		HEURISTIC_NUMBEROFPATHSANDDEPTH,
+		HEURISTIC_NUMBEROFPATHSANDDEPTHANDSUBCAT;
 		
 	}
-	public static void main(String str_fileNameGroundTruthList,String str_fileNameTestSet,Double db_threshold) 
+	private static void emptyMaps()
 	{
+		hmap_heuResult.clear();
+		hmap_heuResultNormalized.clear();
+		hmap_heuResultNormalizedSorted.clear();
+		hmap_heuResultNormalizedSortedFiltered.clear();
+		hset_ValuesToNormalize.clear();
+		hmap_NormalizationMap.clear();
+		hmap_precisionRecallFmeasure.clear();
+	}
+	public static void main(String str_fileNameGroundTruthList,String str_fileNameTestSet,Double db_threshold, HeuristicType heu) 
+	{
+		emptyMaps();
+		ReadSubCategoryNumber();
+		threshold = db_threshold;
 		InitializeGroundTruthAndList(str_fileNameGroundTruthList);
 		InitializeTestSet(str_fileNameTestSet);
 		
-		printMap(log_heuResult,hmap_groundTruth);
-		printMap(log_testSet,hmap_testSet);
-		
-		threshold = db_threshold;
-		
-		CallHeuristic(hmap_testSet,HuristicType.NO_HURISTIC);
-		CompareResultsWithGroundTruth(hmap_groundTruth,hmap_heuResult);
-		CallCalculatePrecisionAndRecall();
-		//printMap(log_testSet,hmap_testSet);
-
+		callHeuristic(heu);//hmap_heuResult
+		callNormalization();//hmap_heuResultNormalized
+		SortHeuristicResults();//hmap_heuResultNormalizedSorted
+		filterHeuResults();//hmap_heuResultNormalizedSortedFiltered
+		/*
+		 * 1)Heu
+		 * 2)Normalization
+		 * 3)Sort
+		 * 4)Filter
+		 *  = hmap_finalResult
+		 */
+		compareResultsWithGroundTruth();
+		callCalculatePrecisionAndRecall();
 	}
 
-	public static void CallCalculatePrecisionAndRecall()
+	public static void callNormalization()
+	{
+		NormalizeHashSet();
+		
+		
+		
+		for(Entry<String, LinkedHashMap<String, Double>> entry: hmap_heuResult.entrySet()) 
+		{
+			LinkedHashMap<String, Double> lhmap_temp = new LinkedHashMap<>();
+			
+			String str_entityNameAndDepth = entry.getKey();
+			
+			LinkedHashMap<String, Double> hmap_CatAndValue = entry.getValue();
+
+			for(Entry<String, Double> entry_CatAndValue: hmap_CatAndValue.entrySet()) 
+			{
+				lhmap_temp.put(entry_CatAndValue.getKey(), hmap_NormalizationMap.get(entry_CatAndValue.getValue()));
+			}
+			hmap_heuResultNormalized.put(str_entityNameAndDepth, lhmap_temp);
+			
+		}
+		
+	}
+	public static void callCalculatePrecisionAndRecall()
 	{
 
-		for(Entry<String, LinkedHashMap<String, Double>> entry: hmap_heuResultThresholdFiltered.entrySet()) 
+		for(Entry<String, LinkedHashMap<String, Double>> entry: hmap_heuResultNormalizedSortedFiltered.entrySet()) 
 		{
 			String str_entityNameAndDepth= entry.getKey();
 			String str_depth= str_entityNameAndDepth.substring(str_entityNameAndDepth.indexOf(str_depthSeparator)+str_depthSeparator.length(),
@@ -72,7 +124,14 @@ public class CalculatePrecisionAndRecall {
 			hmap_precisionRecallFmeasure.put(str_entityNameAndDepth, CalculatePrecisionRecallFmeasure(str_entityName,str_depth));
 		}
 
-		for (Integer int_depth = 1; int_depth <= int_depthOfTheTree ; int_depth++) 
+		String str_Pre="=SPLIT(\""; 
+		String str_Rec ="=SPLIT(\"";
+		String str_Fsco="=SPLIT(\"";
+		
+		
+				
+		for (Integer int_depth = int_depthOfTheTree; int_depth > 0 ; int_depth--)
+//		for (Integer int_depth = 1; int_depth <= int_depthOfTheTree ; int_depth++) 
 		{
 			int int_NumberOfEntities =0;
 			Double[] arr_Pre = new Double[int_depthOfTheTree];
@@ -89,12 +148,8 @@ public class CalculatePrecisionAndRecall {
 				if (Integer.parseInt(str_entityNameAndDepth.substring(str_entityNameAndDepth.indexOf(str_depthSeparator)+str_depthSeparator.length(),
 						str_entityNameAndDepth.length()))==int_depth) 
 				{
-					
 					int_NumberOfEntities++;
 					LinkedHashMap<String, Double> hmap_preRcalFsco = entry.getValue();
-
-					
-
 					for(Entry<String, Double> entry_preRcallFsco: hmap_preRcalFsco.entrySet()) 
 					{
 						if (entry_preRcallFsco.getKey().equals("Precision")) 
@@ -112,10 +167,23 @@ public class CalculatePrecisionAndRecall {
 					}
 				}
 			}
-			System.out.println("Depth "+ int_depth + " Precision " + arr_Pre[int_depth-1]/int_NumberOfEntities);
-			System.out.println("Depth "+ int_depth + " Recall " + arr_Rec[int_depth-1]/int_NumberOfEntities);
-			System.out.println("Depth "+ int_depth + " Fscore " + arr_Fsco[int_depth-1]/int_NumberOfEntities);
+			 DecimalFormat df = new DecimalFormat("0.00000");
+			str_Pre= str_Pre+" ,"+df.format(arr_Pre[int_depth-1]/int_NumberOfEntities);
+			str_Rec= str_Rec+" ,"+df.format(arr_Rec[int_depth-1]/int_NumberOfEntities);
+			str_Fsco= str_Fsco+" ,"+df.format(arr_Fsco[int_depth-1]/int_NumberOfEntities);
+//			System.out.println("Depth "+ int_depth + " Precision " + df.format(arr_Pre[int_depth-1]/int_NumberOfEntities));
+//			System.out.println("Depth "+ int_depth + " Recall " + df.format(arr_Rec[int_depth-1]/int_NumberOfEntities));
+//			System.out.println("Depth "+ int_depth + " Fscore " + df.format(arr_Fsco[int_depth-1]/int_NumberOfEntities));
+			
 		}
+		str_Pre += "\",\",\")";
+		str_Rec += "\",\",\")";
+		str_Fsco += "\",\",\")";
+		
+		System.out.println(str_Pre.replace("=SPLIT(\" ,", "=SPLIT(\""));
+		System.out.println(str_Rec.replace("=SPLIT(\" ,", "=SPLIT(\""));
+		System.out.println(str_Fsco.replace("=SPLIT(\" ,", "=SPLIT(\""));
+		
 	}
 	public static double GetAverageArray(Double[] arr)
 	{
@@ -144,7 +212,7 @@ public class CalculatePrecisionAndRecall {
 
 		double precision=0.0, recall=0.0, Fscore=0.0;
 
-		LinkedHashMap<String, Double> lhmap_depthElements = hmap_heuResultThresholdFiltered.get(str_entity+str_depthSeparator+str_depth);
+		LinkedHashMap<String, Double> lhmap_depthElements = hmap_heuResultNormalizedSortedFiltered.get(str_entity+str_depthSeparator+str_depth);
 		LinkedList<String> llist_groundTruth = hmap_groundTruthlist.get(str_entity);
 
 		
@@ -194,7 +262,7 @@ public class CalculatePrecisionAndRecall {
 				line =line.toLowerCase();
 				if (line==null)
 				{
-					System.out.println("--------------------------------------");
+					//System.out.println("--------------------------------------");
 				}
 				LinkedList<String> ll_goalSet = new LinkedList<>();
 				String[] str_split = line.split("\t");
@@ -212,7 +280,7 @@ public class CalculatePrecisionAndRecall {
 				hmap_groundTruth.put(str_entity, str_mainCat);
 				hmap_groundTruthlist.put(str_entity, ll_goalSet);
 				if (hmap_groundTruth.size()>100) {
-					System.out.println("--------------------------------------");
+					//System.out.println("--------------------------------------");
 				}
 			}
 
@@ -221,7 +289,7 @@ public class CalculatePrecisionAndRecall {
 				str_entity = entry.getKey();
 				LinkedList<String> str_categories = entry.getValue();
 
-				System.out.println(str_entity+ " "+ str_categories);
+				//System.out.println(str_entity+ " "+ str_categories);
 			}
 		}
 		catch (IOException e) {
@@ -298,55 +366,53 @@ public class CalculatePrecisionAndRecall {
 		
 	}
 
-	public static void SortHeuristicResults(LinkedHashMap<String, LinkedHashMap<String, Double>> hmap)
+	public static void SortHeuristicResults()
 	{
-		for(Entry<String, LinkedHashMap<String, Double>> entry: hmap.entrySet()) 
+		for(Entry<String, LinkedHashMap<String, Double>> entry: hmap_heuResultNormalized.entrySet()) 
 		{
 			final LinkedHashMap<String, Double> temp = sortByValue(entry.getValue());
-			hmap_heuResult.put(entry.getKey(), temp);
+			hmap_heuResultNormalizedSorted.put(entry.getKey(), temp);
 		}
 	}
-	public static void CallHeuristic(LinkedHashMap<String, LinkedHashMap<String, Double>> hmap_testSet, HuristicType enum_heuType) 
+	public static void callHeuristic(HeuristicType enum_heuType) 
 	{
-		LinkedHashMap<String, LinkedHashMap<String, Double>> hmap_tempResults = new LinkedHashMap<>();
-
 		for(Entry<String, LinkedHashMap<String, Double>> entry: hmap_testSet.entrySet()) 
 		{
 			String str_entityName = entry.getKey();
 			String str_depth=str_entityName.substring(str_entityName.indexOf(str_depthSeparator)+str_depthSeparator.length(),str_entityName.length());
 			LinkedHashMap<String, Double> hmap_Values = (LinkedHashMap<String, Double>) entry.getValue();
-
+			LinkedHashMap<String, Double> lhmap_Results = (LinkedHashMap<String, Double>) entry.getValue();
 			for(Entry<String, Double> entry_hmapValues: hmap_Values.entrySet()) 
 			{
 				String str_catName = entry_hmapValues.getKey();
 				Double db_value =entry_hmapValues.getValue();
 				Double db_heuValue =0.0;
-				if (enum_heuType.equals(HuristicType.NO_HURISTIC)) 
+				if (enum_heuType.equals(HeuristicType.HEURISTIC_NO)) 
 				{
 					 db_heuValue = Heuristic_NanHeuristic(db_value);
 				}
-				else if (enum_heuType.equals(HuristicType.NUMBEROFPATHS_HURISTIC)) 
+				else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHS)) 
 				{
 					 db_heuValue = Heuristic_NumberOfPaths(db_value);
 				}
-				else if (enum_heuType.equals(HuristicType.NUMBEROFPATHSANDSUBCAT__HURISTIC)) 
+				else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHSANDDEPTH)) 
 				{
-					// db_heuValue = Heuristic_NumberOfPaths(db_value);
+					 db_heuValue = Heuristic_NumberOfPathsAndDepth(db_value,Integer.parseInt(str_depth));
 				}
-				
-				hmap_Values.put(str_catName, db_heuValue);
-				//System.err.println(str_entityName);
+				else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHSANDDEPTHANDSUBCAT)) 
+				{
+					db_heuValue = Heuristic_NumberOfPathsDepthSubCat(db_value,Integer.parseInt(str_depth),  str_catName);
+				}
+				lhmap_Results.put(str_catName, db_heuValue);
+				hset_ValuesToNormalize.add(db_heuValue);
 			}
-			hmap_tempResults.put(str_entityName, hmap_Values);
+			hmap_heuResult.put(str_entityName, lhmap_Results);
 		}
 		//System.err.println("ZZZZZZZZZZZ "+hmap_tempResults.containsKey("Gustav_Mahler__1"));
-
-		SortHeuristicResults(hmap_tempResults);
-		FilterHeuResults();
 	}
-	public static void FilterHeuResults()
+	public static void filterHeuResults()
 	{
-		for(Entry<String, LinkedHashMap<String, Double>> entry: hmap_heuResult.entrySet()) 
+		for(Entry<String, LinkedHashMap<String, Double>> entry: hmap_heuResultNormalizedSorted.entrySet()) 
 		{
 			String str_entityName = entry.getKey();
 
@@ -362,7 +428,7 @@ public class CalculatePrecisionAndRecall {
 					hmap_catAndValFiletered.put(str_catName, db_value);
 				}
 			}
-			hmap_heuResultThresholdFiltered.put(str_entityName, hmap_catAndValFiletered);
+			hmap_heuResultNormalizedSortedFiltered.put(str_entityName, hmap_catAndValFiletered);
 		}
 	}
 	private static double Heuristic_NanHeuristic(double db_Value)
@@ -377,18 +443,18 @@ public class CalculatePrecisionAndRecall {
 	{
 		return (double)(db_Value/(double)int_depth);
 	}
-	private static double Heuristic_NumberOfPathsAndDepth(double db_Value,int int_depth,double treshold)
+	private static double Heuristic_NumberOfPathsDepthSubCat(double db_Value,int int_depth,String  str_cat)
 	{
-		return (double)(db_Value/(double)int_depth);
+		return (double)int_depth/(double)(hmap_subCategoryCount.get(str_cat).get(int_depth-1)*int_depth);
 	}
 	
-	private static void CompareResultsWithGroundTruth(HashMap<String, String> hmap_GTruth,
-			Map<String, LinkedHashMap<String, Double>> hmap_hResults)
+	private static void compareResultsWithGroundTruth()
 	{
 		int[] arr_FoundDepth = new int[int_depthOfTheTree];
 		int count_Cat=0;
 		int count_NotFoundCat =0;
-		for(Entry<String, String> entry: hmap_GTruth.entrySet()) 
+		
+		for(Entry<String, String> entry: hmap_groundTruth.entrySet()) 
 		{
 			String str_entity = entry.getKey();
 			String str_category = entry.getValue();
@@ -397,7 +463,7 @@ public class CalculatePrecisionAndRecall {
 			for (int i = 0; i <7; i++) 
 			{ 	
 				Integer int_index=i+1;
-				LinkedHashMap<String, Double> ll_result = hmap_hResults.get(str_entity+str_depthSeparator+int_index.toString());
+				LinkedHashMap<String, Double> ll_result = hmap_heuResult.get(str_entity+str_depthSeparator+int_index.toString());
 				if(ll_result==null) {
 					continue;
 				}
@@ -407,7 +473,7 @@ public class CalculatePrecisionAndRecall {
 					///////////////////////////////////////////////////////
 					final Double maxNumber = ll_result.values().iterator().next();
 					final List<String> firstElements = ll_result.entrySet().stream().filter(p -> p.getValue()>=maxNumber).map(p -> p.getKey()).collect(Collectors.toList());
-					System.err.println(str_entity+"\t"+int_index+"\t"+str_category +"\t"+firstElements+"\t"+firstElements.contains(str_category));
+					//System.err.println(str_entity+"\t"+int_index+"\t"+str_category +"\t"+firstElements+"\t"+firstElements.contains(str_category));
 					if (firstElements.contains(str_category))
 					///////////////////////////////////////////////////////
 					//if (str_resCat.equals(str_category)) 
@@ -423,23 +489,46 @@ public class CalculatePrecisionAndRecall {
 			}
 			if (!changed)
 			{
-				System.out.println("XXXXXXXXXXX "+str_entity);
+				//System.out.println("XXXXXXXXXXX "+str_entity);
 				count_NotFoundCat++;
 			}
 
 		}
-		
-//		System.out.println(count);
-//		System.out.println(count_Cat);
-		for (int i = 0; i < arr_FoundDepth.length; i++) 
+		//System.out.println("=SPLIT(\"" + formatResult[i] + "\",\",\")");
+		String str_formated="=SPLIT(\""; 
+		for (int i = 0; i< arr_FoundDepth.length; i++) 
 		{
-			System.out.println("Depth"+(i+1)+":" +arr_FoundDepth[i]);
+
+			str_formated= str_formated+ " ,"+arr_FoundDepth[i];
+//			System.out.println(arr_FoundDepth[i]);
 		}
 		
-		System.out.println("Entity Count: "+ hmap_GTruth.size());
-		//System.out.println("Test Entity Count: "+ hmap_testSet.size());
+		
+		str_formated += "\",\",\")";
+		System.out.println(str_formated.replace("=SPLIT(\" ,", "=SPLIT(\""));
+		
+		System.out.println("Entity Count: "+ hmap_groundTruth.size());
 		System.out.println("Total Found Category Number: "+ count_Cat );
 		System.out.println("Total NOT Found Category Number: "+ count_NotFoundCat );
+	}
+	
+	public static void NormalizeHashSet()  
+	{
+	
+		double min = Collections.min(hset_ValuesToNormalize);
+		double max =Collections.max(hset_ValuesToNormalize);
+		
+		if (min==max) 
+		{
+			hmap_NormalizationMap.put(min, 1.);
+			return;
+		}
+		
+		for (Double db_val: hset_ValuesToNormalize)
+		{
+			hmap_NormalizationMap.put(db_val, ((double) ((double) (db_val - min) / (double) (max - min))));
+		}
+		
 	}
 	
 	public static void printMap(Logger log, Map mp) {
@@ -453,32 +542,54 @@ public class CalculatePrecisionAndRecall {
 		}
 	}
 	private static LinkedHashMap<String, Double> sortByValue(Map<String, Double> unsortMap) {
-
-		// 1. Convert Map to List of Map
 		List<Map.Entry<String, Double>> list = new LinkedList<Map.Entry<String, Double>>(unsortMap.entrySet());
-
-		// 2. Sort list with Collections.sort(), provide a custom Comparator
-		// Try switch the o1 o2 position for a different order
 		Collections.sort(list, new Comparator<Map.Entry<String, Double>>() {
 			public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
 				return (o2.getValue()).compareTo(o1.getValue());
 			}
 		});
-
-		// 3. Loop the sorted list and put it into a new insertion order Map
-		// LinkedHashMap
 		LinkedHashMap<String, Double> sortedMap = new LinkedHashMap<String, Double>();
 		for (Map.Entry<String, Double> entry : list) {
 			sortedMap.put(entry.getKey(), entry.getValue());
 		}
-
-		/*
-		 * //classic iterator example for (Iterator<Map.Entry<String, Integer>>
-		 * it = list.iterator(); it.hasNext(); ) { Map.Entry<String, Integer>
-		 * entry = it.next(); sortedMap.put(entry.getKey(), entry.getValue()); }
-		 */
-
 		return sortedMap;
 	}
 
+	public static void ReadSubCategoryNumber() {
+		String[] subCount = null;
+		
+		int[] int_subCount;
+		double[] double_subCount;
+		BufferedReader brC;
+		ArrayList<Double> arrListTemp;
+		try {
+			brC = new BufferedReader(new FileReader(str_path+"SubCategory_Count.csv"));
+			String lineCategory = null;
+
+			while ((lineCategory = brC.readLine()) != null) {
+
+				lineCategory=lineCategory.toLowerCase();
+				arrListTemp = new ArrayList<>();
+				// System.out.println(lineCategory);
+				subCount = (lineCategory.substring(lineCategory.indexOf(":,") + 2, lineCategory.length()).split(","));
+				int_subCount = Arrays.stream(subCount).mapToInt(Integer::parseInt).toArray();
+
+
+				for (int i = 0; i < int_subCount.length; i++)
+				{
+					arrListTemp.add((double)int_subCount[i]);
+				}
+
+				
+				hmap_subCategoryCount.put(lineCategory.substring(0, lineCategory.indexOf(":")), arrListTemp);
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 }

@@ -3,6 +3,8 @@ package TreeGeneration;
 import java.io.File;
 import java.io.IOException;
 
+import TreeGeneration.CalculatePrecisionAndRecall.HeuristicType;
+
 public class Main {
 
 	/**
@@ -14,7 +16,22 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException 
 	{
-		CalculatePrecisionAndRecall.main("GoalSet_AllCombined.tsv","Results_All_L7",0.0);
+		
+		
+		for (double the = 0.1; the < 0.9; the+=0.1) 
+		{
+//		for (double the = 0; the < 0.9; the+=0.1) 
+
+			System.out.println("--------------------Threshold-------------------"+ the);
+			for (HeuristicType heu : HeuristicType.values())
+			{
+				System.out.println("----"+heu+"-----");
+				CalculatePrecisionAndRecall.main("GoalSet_AllCombined.tsv","Results_All_L7",the,heu);		
+			}
+			System.out.println("----------------------------------------");
+		}
+		
+		
 		
 		
 //		ReadResults.ReadResultFromAllFile("Example_2"+File.separator+"file_David",
