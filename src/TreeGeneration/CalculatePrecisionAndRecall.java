@@ -32,8 +32,8 @@ public class CalculatePrecisionAndRecall {
 	private static double threshold= 0;
 	
 	private static final Logger LOG = Logger.getLogger(CalculatePrecisionAndRecall.class.getCanonicalName());
-	private static final Logger log_testSet = Logger.getLogger("debugLogger");
-	private static final Logger log_heuResult = Logger.getLogger("reportsLogger");
+	private static final Logger log_heuResult = Logger.getLogger("heuResultLogger");
+	private static final Logger  log_normalized= Logger.getLogger("reportsLogger");
 	
 	private static final Map<String, ArrayList<Double>> hmap_subCategoryCount = new HashMap<>();
 	private static final HashMap<String, String> hmap_groundTruth = new LinkedHashMap<>();
@@ -75,9 +75,18 @@ public class CalculatePrecisionAndRecall {
 		InitializeTestSet(str_fileNameTestSet);
 		
 		callHeuristic(heu);//hmap_heuResult
+//		if (heu.equals(HeuristicType.HEURISTIC_NUMBEROFPATHSANDDEPTHANDSUBCAT)) 
+//		{
+//			printMap(log_heuResult, hmap_heuResult,heu);
+//		}
+		
+		
 		callNormalization();//hmap_heuResultNormalized
+		//printMap(log_normalized, hmap_heuResultNormalized,heu);
 		SortHeuristicResults();//hmap_heuResultNormalizedSorted
 		filterHeuResults();//hmap_heuResultNormalizedSortedFiltered
+		//printMap(log_normalized, hmap_heuResultNormalizedSortedFiltered,heu);
+		
 		/*
 		 * 1)Heu
 		 * 2)Normalization
@@ -85,7 +94,7 @@ public class CalculatePrecisionAndRecall {
 		 * 4)Filter
 		 *  = hmap_finalResult
 		 */
-		compareResultsWithGroundTruth();
+		compareResultsWithGroundTruth(hmap_heuResultNormalizedSortedFiltered);
 		callCalculatePrecisionAndRecall();
 	}
 
@@ -435,20 +444,23 @@ public class CalculatePrecisionAndRecall {
 	{
 		return 1.0;
 	}
+	
 	private static double Heuristic_NumberOfPaths(double db_Value)
 	{
 		return db_Value;
 	}
+	
 	private static double Heuristic_NumberOfPathsAndDepth(double db_Value,int int_depth)
 	{
 		return (double)(db_Value/(double)int_depth);
 	}
+	
 	private static double Heuristic_NumberOfPathsDepthSubCat(double db_Value,int int_depth,String  str_cat)
 	{
-		return (double)int_depth/(double)(hmap_subCategoryCount.get(str_cat).get(int_depth-1)*int_depth);
+		return (double)db_Value/(double)((hmap_subCategoryCount.get(str_cat).get(int_depth-1)*int_depth));
 	}
 	
-	private static void compareResultsWithGroundTruth()
+	private static void compareResultsWithGroundTruth(Map<String, LinkedHashMap<String, Double>> hmap_heuResult)
 	{
 		int[] arr_FoundDepth = new int[int_depthOfTheTree];
 		int count_Cat=0;
@@ -464,6 +476,7 @@ public class CalculatePrecisionAndRecall {
 			{ 	
 				Integer int_index=i+1;
 				LinkedHashMap<String, Double> ll_result = hmap_heuResult.get(str_entity+str_depthSeparator+int_index.toString());
+				
 				if(ll_result==null) {
 					continue;
 				}
@@ -528,18 +541,31 @@ public class CalculatePrecisionAndRecall {
 		{
 			hmap_NormalizationMap.put(db_val, ((double) ((double) (db_val - min) / (double) (max - min))));
 		}
-		
+		//Double[] array = hmap_NormalizationMap.values().stream().toArray(x -> new Double[x]);
+		//System.err.println("Median :"+median(array));
 	}
 	
-	public static void printMap(Logger log, Map mp) {
+	public static double median(Double[] m) {
+	    int middle = m.length/2;
+	    if (m.length%2 == 1) {
+	        return m[middle];
+	    } else {
+	        return (m[middle-1] + m[middle]) / 2.0;
+	    }
+	}
+	
+	public static void printMap(Logger log, Map mp, HeuristicType heu) {
 		//System.out.println("----------------------------");
-		log.info("----------------------------");
+		log.info(heu);
 		Iterator it = mp.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry)it.next();
-			//System.out.println(pair.getKey() + " = " + pair.getValue());
-			log.info(pair.getKey() + " = " + pair.getValue());
+//			//System.out.println(pair.getKey() + " = " + pair.getValue());
+//			log.info(pair.getKey() + " = " + pair.getValue());
+			System.out.println(pair.getKey() + " = " + pair.getValue());
 		}
+		log.info("----------------------------");
+		log.info("");
 	}
 	private static LinkedHashMap<String, Double> sortByValue(Map<String, Double> unsortMap) {
 		List<Map.Entry<String, Double>> list = new LinkedList<Map.Entry<String, Double>>(unsortMap.entrySet());
@@ -574,13 +600,10 @@ public class CalculatePrecisionAndRecall {
 				subCount = (lineCategory.substring(lineCategory.indexOf(":,") + 2, lineCategory.length()).split(","));
 				int_subCount = Arrays.stream(subCount).mapToInt(Integer::parseInt).toArray();
 
-
 				for (int i = 0; i < int_subCount.length; i++)
 				{
 					arrListTemp.add((double)int_subCount[i]);
 				}
-
-				
 				hmap_subCategoryCount.put(lineCategory.substring(0, lineCategory.indexOf(":")), arrListTemp);
 			}
 		} catch (FileNotFoundException e) {

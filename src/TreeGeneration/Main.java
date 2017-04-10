@@ -18,7 +18,7 @@ public class Main {
 	{
 		
 		
-		for (double the = 0.1; the < 0.9; the+=0.1) 
+		for (double the = 0.20; the <= 0.20; the+=0.001) 
 		{
 //		for (double the = 0; the < 0.9; the+=0.1) 
 
