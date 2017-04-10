@@ -2,6 +2,8 @@
 /CategoryFiles/*
 /FilesForComparison/*
 /Vectors/*
+/Examples/*
+log
 *.zip
 *.txt
 /bin/TreeGeneration/*.class
