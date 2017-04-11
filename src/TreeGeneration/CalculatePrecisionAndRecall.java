@@ -75,17 +75,14 @@ public class CalculatePrecisionAndRecall {
 		InitializeTestSet(str_fileNameTestSet);
 		
 		callHeuristic(heu);//hmap_heuResult
-//		if (heu.equals(HeuristicType.HEURISTIC_NUMBEROFPATHSANDDEPTHANDSUBCAT)) 
-//		{
-//			printMap(log_heuResult, hmap_heuResult,heu);
-//		}
-		
-		
 		callNormalization();//hmap_heuResultNormalized
 		//printMap(log_normalized, hmap_heuResultNormalized,heu);
 		SortHeuristicResults();//hmap_heuResultNormalizedSorted
 		filterHeuResults();//hmap_heuResultNormalizedSortedFiltered
 		//printMap(log_normalized, hmap_heuResultNormalizedSortedFiltered,heu);
+		
+		//System.out.println("Number Of Entities Before Filtering"+ hmap_heuResultNormalizedSorted.size());
+		
 		
 		/*
 		 * 1)Heu
@@ -421,6 +418,10 @@ public class CalculatePrecisionAndRecall {
 	}
 	public static void filterHeuResults()
 	{
+		int int_catNumberBeforeFilter=0;
+		int int_catNumberFiltered=0;
+		
+		
 		for(Entry<String, LinkedHashMap<String, Double>> entry: hmap_heuResultNormalizedSorted.entrySet()) 
 		{
 			String str_entityName = entry.getKey();
@@ -432,13 +433,23 @@ public class CalculatePrecisionAndRecall {
 			{
 				String str_catName = entry_hmapValues.getKey();
 				Double db_value =entry_hmapValues.getValue();
-				if (db_value > threshold) 
+				int_catNumberBeforeFilter++;
+				if (db_value >= threshold) 
 				{
 					hmap_catAndValFiletered.put(str_catName, db_value);
+				}
+				else
+				{
+					int_catNumberFiltered++;
 				}
 			}
 			hmap_heuResultNormalizedSortedFiltered.put(str_entityName, hmap_catAndValFiletered);
 		}
+		System.out.println();
+		System.out.println("Thershold"+ threshold );
+		System.out.println("Total Category Number Before Filtering:"+ int_catNumberBeforeFilter );
+		System.out.println("Total Category Number After Filtering:"+ (int_catNumberBeforeFilter-int_catNumberFiltered) );
+		System.out.println();
 	}
 	private static double Heuristic_NanHeuristic(double db_Value)
 	{
@@ -509,7 +520,7 @@ public class CalculatePrecisionAndRecall {
 		}
 		//System.out.println("=SPLIT(\"" + formatResult[i] + "\",\",\")");
 		String str_formated="=SPLIT(\""; 
-		for (int i = 0; i< arr_FoundDepth.length; i++) 
+		for (int i = arr_FoundDepth.length-1; i>= 0; i--) 
 		{
 
 			str_formated= str_formated+ " ,"+arr_FoundDepth[i];
