@@ -1,6 +1,7 @@
 package TreeGeneration;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -48,7 +49,7 @@ public class CalculatePrecisionAndRecall {
 	private static final Map<String, LinkedHashMap<String, Double>> hmap_precisionRecallFmeasure = new LinkedHashMap<>();
 
 	enum HeuristicType {
-		// HEURISTIC_NO,
+		 HEURISTIC_NO,
 		HEURISTIC_NUMBEROFPATHS, HEURISTIC_NUMBEROFPATHSANDDEPTH,
 		// HEURISTIC_NUMBEROFPATHSANDDEPTHANDSUBCAT;
 
@@ -61,7 +62,44 @@ public class CalculatePrecisionAndRecall {
 		hmap_heuResultNormalizedSortedFiltered.clear();
 		hmap_precisionRecallFmeasure.clear();
 	}
+	public static void testNormalization()
+	{
+		for (Entry<String, String> entry : hmap_groundTruth.entrySet()) {
+			String str_entity = entry.getKey();
+			LinkedHashMap<String, Double> lhmap_temp = new LinkedHashMap<>();
+			HashSet<Double> hset_ValuesToNormalize = new HashSet<>();
+			String str_entityNameAndDepth = entry.getKey();
 
+			LinkedList<Double> llist_test = new LinkedList<>(); 
+			for (Integer i = 1; i <= int_depthOfTheTree; i++) {
+				
+				LinkedHashMap<String, Double> ll_result = hmap_heuResultNormalized.get(str_entity + str_depthSeparator + i.toString());
+				
+				if ( hmap_heuResultNormalized.get(str_entity + str_depthSeparator + i.toString())!=null)
+				{
+					for (Entry<String, Double> entry_CatAndValue : ll_result.entrySet()) 
+					{
+						llist_test.add(entry_CatAndValue.getValue());
+					}
+					
+					
+				}
+				
+			}
+//			LinkedList<Double> ll_de = new LinkedList<>();
+			if (llist_test.size()>0&&!Collections.max(llist_test).equals(1.)) 
+			{
+				System.out.println(str_entity+ "HATA");
+			}
+//			if (llist_test.size()==0) {
+//				
+//				System.out.println(str_entity);
+//				
+//			}
+				
+			}
+		}
+	
 	public static void main(String str_fileNameGroundTruthList, String str_fileNameTestSet, Double db_threshold,
 			HeuristicType heu) {
 		emptyMaps();
@@ -77,9 +115,11 @@ public class CalculatePrecisionAndRecall {
 		// printMap(log_normalized, hmap_testSet,heu);
 
 		callHeuristic(heu);// hmap_heuResult
-		printMap(log_normalized, hmap_heuResult, heu);
+		//printMap(log_normalized, hmap_heuResult, heu);
 		callNormalization();// hmap_heuResultNormalized
-		printMap(log_normalized, hmap_heuResultNormalized, heu);
+		testNormalization();
+		//System.out.println("Finished Test");
+		//printMap(log_normalized, hmap_heuResultNormalized, heu);
 		SortHeuristicResults();// hmap_heuResultNormalizedSorted
 		filterHeuResults();// hmap_heuResultNormalizedSortedFiltered
 		// printMap(log_normalized, hmap_heuResultNormalizedSortedFiltered,heu);
@@ -128,8 +168,17 @@ public class CalculatePrecisionAndRecall {
 					hmap_heuResultNormalized.put(str_entity + str_depthSeparator + i.toString(), lhmap_temp);
 
 				}
-
+				
+				
 			}
+			else
+			{
+				for (Integer i = int_depthOfTheTree; i > 0; i--) {
+					hmap_heuResultNormalized.put(str_entity + str_depthSeparator + i.toString(), lhmap_temp);
+				}
+				
+			}
+
 		}
 	}
 
@@ -217,9 +266,9 @@ public class CalculatePrecisionAndRecall {
 		str_Rec += "\",\",\")";
 		str_Fsco += "\",\",\")";
 
-		System.out.println(str_Pre.replace("=SPLIT(\" ,", "=SPLIT(\""));
-		System.out.println(str_Rec.replace("=SPLIT(\" ,", "=SPLIT(\""));
-		System.out.println(str_Fsco.replace("=SPLIT(\" ,", "=SPLIT(\""));
+//		System.out.println(str_Pre.replace("=SPLIT(\" ,", "=SPLIT(\""));
+//		System.out.println(str_Rec.replace("=SPLIT(\" ,", "=SPLIT(\""));
+//		System.out.println(str_Fsco.replace("=SPLIT(\" ,", "=SPLIT(\""));
 
 	}
 
@@ -397,11 +446,11 @@ public class CalculatePrecisionAndRecall {
 				String str_catName = entry_hmapValues.getKey();
 				Double db_value = entry_hmapValues.getValue();
 				Double db_heuValue = 0.0;
-				// if (enum_heuType.equals(HeuristicType.HEURISTIC_NO))
-				// {
-				// db_heuValue = Heuristic_NanHeuristic(db_value);
-				// }
-				if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHS)) {
+				 if (enum_heuType.equals(HeuristicType.HEURISTIC_NO))
+				 {
+					 db_heuValue = Heuristic_NanHeuristic(db_value);
+				 }
+				 else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHS)) {
 					db_heuValue = Heuristic_NumberOfPaths(db_value);
 				} else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHSANDDEPTH)) {
 					db_heuValue = Heuristic_NumberOfPathsAndDepth(db_value, Integer.parseInt(str_depth));
@@ -443,13 +492,13 @@ public class CalculatePrecisionAndRecall {
 			}
 			hmap_heuResultNormalizedSortedFiltered.put(str_entityName, hmap_catAndValFiletered);
 		}
-		// System.out.println();
-		// System.out.println("Thershold"+ threshold );
-		// System.out.println("Total Category Number Before Filtering:"+
-		// int_catNumberBeforeFilter );
-		// System.out.println("Total Category Number After Filtering:"+
-		// (int_catNumberBeforeFilter-int_catNumberFiltered) );
-		// System.out.println();
+		 System.out.println();
+		 System.out.println("Thershold"+ threshold );
+		 System.out.println("Total Category Number Before Filtering:"+
+		 int_catNumberBeforeFilter );
+		 System.out.println("Total Category Number After Filtering:"+
+		 (int_catNumberBeforeFilter-int_catNumberFiltered) );
+		 System.out.println();
 	}
 
 	private static double Heuristic_NanHeuristic(double db_Value) {
