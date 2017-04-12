@@ -20,7 +20,7 @@ public class Main {
 		
 		 
 		
-		for (double the = 0.0001; the <= 0.0001; the+=0.01) 
+		for (double the = 0.0; the <= 0.6; the+=0.1) 
 		{
 			System.out.println("--------------------Threshold-------------------"+ the);
 			for (HeuristicType heu : HeuristicType.values())
