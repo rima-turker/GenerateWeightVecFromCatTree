@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 
-public class GenerateLevels_1 {
+public class GenerateCategoryLevels_1 {
 
 	/**
 	 * @param <E>
@@ -136,7 +136,5 @@ public class GenerateLevels_1 {
 		br_MainCategory.close();
 		
 	}
-	
-	
 }
 

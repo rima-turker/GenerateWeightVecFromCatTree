@@ -45,7 +45,6 @@ public class GenerateLevelTrees_2 {
 				{
 					for (Integer j = 0; j <=i; j++) 
 					{
-						//files[j]=new File("C:\\Users\\Rima\\Desktop\\JavaProjects\\GenerateTree\\CategoryFiles\\"+categoryName+"\\"+categoryName+"_L0");
 						files[j]=new File(System.getProperty("user.dir")+ File.separator+"CategoryFiles/"+categoryName+"/"+categoryName+"_L"+j.toString()); 
 						//System.out.println(j);
 					}
@@ -101,8 +100,6 @@ public class GenerateLevelTrees_2 {
 				}
  
 				in.close();
-				
-				
 				
 			} catch (IOException e) {
 				e.printStackTrace();

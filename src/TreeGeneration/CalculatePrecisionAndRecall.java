@@ -49,7 +49,7 @@ public class CalculatePrecisionAndRecall {
 	private static final Map<String, LinkedHashMap<String, Double>> hmap_precisionRecallFmeasure = new LinkedHashMap<>();
 
 	enum HeuristicType {
-		 HEURISTIC_NO,
+		 //HEURISTIC_NO,
 		HEURISTIC_NUMBEROFPATHS, HEURISTIC_NUMBEROFPATHSANDDEPTH,
 		// HEURISTIC_NUMBEROFPATHSANDDEPTHANDSUBCAT;
 
@@ -117,7 +117,7 @@ public class CalculatePrecisionAndRecall {
 		callHeuristic(heu);// hmap_heuResult
 		//printMap(log_normalized, hmap_heuResult, heu);
 		callNormalization();// hmap_heuResultNormalized
-		testNormalization();
+		//testNormalization();
 		//System.out.println("Finished Test");
 		//printMap(log_normalized, hmap_heuResultNormalized, heu);
 		SortHeuristicResults();// hmap_heuResultNormalizedSorted
@@ -151,7 +151,8 @@ public class CalculatePrecisionAndRecall {
 				}
 			}
 
-			if (hset_ValuesToNormalize.size() > 0) {
+			if (hset_ValuesToNormalize.size() > 0) 
+			{
 				Map<Double, Double> hmap_NormalizationMap = NormalizeHashSet(hset_ValuesToNormalize);
 
 				for (Integer i = int_depthOfTheTree; i > 0; i--) {
@@ -166,10 +167,7 @@ public class CalculatePrecisionAndRecall {
 								hmap_NormalizationMap.get(entry_CatAndValue.getValue()));
 					}
 					hmap_heuResultNormalized.put(str_entity + str_depthSeparator + i.toString(), lhmap_temp);
-
 				}
-				
-				
 			}
 			else
 			{
@@ -433,6 +431,14 @@ public class CalculatePrecisionAndRecall {
 			final LinkedHashMap<String, Double> temp = sortByValue(entry.getValue());
 			hmap_heuResultNormalizedSorted.put(entry.getKey(), temp);
 		}
+		
+		//18/0
+		for (Entry<String, LinkedHashMap<String, Double>> entry : hmap_heuResultNormalized.entrySet()) {
+			String str_entity = entry.getKey();
+			LinkedHashMap<String, Double> str_categories = entry.getValue();
+
+			System.out.println(str_entity+ " "+ str_categories);
+		}
 	}
 
 	public static void callHeuristic(HeuristicType enum_heuType) {
@@ -446,11 +452,12 @@ public class CalculatePrecisionAndRecall {
 				String str_catName = entry_hmapValues.getKey();
 				Double db_value = entry_hmapValues.getValue();
 				Double db_heuValue = 0.0;
-				 if (enum_heuType.equals(HeuristicType.HEURISTIC_NO))
-				 {
-					 db_heuValue = Heuristic_NanHeuristic(db_value);
-				 }
-				 else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHS)) {
+//				 if (enum_heuType.equals(HeuristicType.HEURISTIC_NO))
+//				 {
+//					 db_heuValue = Heuristic_NanHeuristic(db_value);
+//				 }
+				// else 
+					 if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHS)) {
 					db_heuValue = Heuristic_NumberOfPaths(db_value);
 				} else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHSANDDEPTH)) {
 					db_heuValue = Heuristic_NumberOfPathsAndDepth(db_value, Integer.parseInt(str_depth));
@@ -474,7 +481,8 @@ public class CalculatePrecisionAndRecall {
 		int int_catNumberBeforeFilter = 0;
 		int int_catNumberFiltered = 0;
 
-		for (Entry<String, LinkedHashMap<String, Double>> entry : hmap_heuResultNormalizedSorted.entrySet()) {
+		for (Entry<String, LinkedHashMap<String, Double>> entry : hmap_heuResultNormalizedSorted.entrySet()) 
+		{
 			String str_entityName = entry.getKey();
 
 			LinkedHashMap<String, Double> hmap_Values = (LinkedHashMap<String, Double>) entry.getValue();
@@ -629,9 +637,6 @@ public class CalculatePrecisionAndRecall {
 			hmap_NormalizationMap.put(db_val, ((double) ((double) db_val / (double) max)));
 		}
 		return hmap_NormalizationMap;
-		// Double[] array = hmap_NormalizationMap.values().stream().toArray(x ->
-		// new Double[x]);
-		// System.err.println("Median :"+median(array));
 	}
 
 	public static double median(Double[] m) {

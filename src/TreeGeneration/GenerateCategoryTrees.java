@@ -38,8 +38,6 @@ public class GenerateCategoryTrees {
 		Integer int_fileIndex=0;
 		String categoryName=null;
 		
-		
-		
 		for (Integer i = 0; i < level; i++) 
 		{
 			files=new File[categoryNCount];
