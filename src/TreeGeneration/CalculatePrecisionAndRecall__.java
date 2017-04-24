@@ -25,14 +25,14 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
-public class CalculatePrecisionAndRecall {
+public class CalculatePrecisionAndRecall__ {
 
 	static String str_path = System.getProperty("user.dir") + File.separator;
 	static int int_depthOfTheTree = 7;
 	static String str_depthSeparator = "__";
 	private static double threshold = 0;
 
-	private static final Logger LOG = Logger.getLogger(CalculatePrecisionAndRecall.class.getCanonicalName());
+	private static final Logger LOG = Logger.getLogger(CalculatePrecisionAndRecall__.class.getCanonicalName());
 	private static final Logger log_heuResult = Logger.getLogger("heuResultLogger");
 	private static final Logger log_normalized = Logger.getLogger("reportsLogger");
 
@@ -49,7 +49,7 @@ public class CalculatePrecisionAndRecall {
 	private static final Map<String, LinkedHashMap<String, Double>> hmap_precisionRecallFmeasure = new LinkedHashMap<>();
 
 	enum HeuristicType {
-		 //HEURISTIC_NO,
+		HEURISTIC_NO,
 		HEURISTIC_NUMBEROFPATHS, HEURISTIC_NUMBEROFPATHSANDDEPTH,
 		// HEURISTIC_NUMBEROFPATHSANDDEPTHANDSUBCAT;
 
@@ -81,8 +81,6 @@ public class CalculatePrecisionAndRecall {
 					{
 						llist_test.add(entry_CatAndValue.getValue());
 					}
-					
-					
 				}
 				
 			}
@@ -105,24 +103,58 @@ public class CalculatePrecisionAndRecall {
 		emptyMaps();
 		ReadSubCategoryNumber();
 		threshold = db_threshold;
+		
 		InitializeGroundTruthAndList(str_fileNameGroundTruthList);
-
-		// printMap(log_normalized, hmap_groundTruth,heu);
+		//printMap(log_normalized, hmap_groundTruthlist,heu);
 		// printMap(log_normalized, hmap_groundTruthlist,heu);
 
 		InitializeTestSet(str_fileNameTestSet);
-
-		// printMap(log_normalized, hmap_testSet,heu);
+		//printMap(log_normalized, hmap_testSet,heu);
 
 		callHeuristic(heu);// hmap_heuResult
 		//printMap(log_normalized, hmap_heuResult, heu);
+		
 		callNormalization();// hmap_heuResultNormalized
+		//printMap(log_normalized, hmap_heuResultNormalized, heu);
 		//testNormalization();
 		//System.out.println("Finished Test");
 		//printMap(log_normalized, hmap_heuResultNormalized, heu);
+		
+		LinkedHashMap<Integer, ArrayList<Double>> lhmap_levelsAndValues= new LinkedHashMap<>();
+		for (Integer i = 1; i <= int_depthOfTheTree; i++) 
+		{
+			HashSet<Double> hset_Values = new HashSet<>();
+			for (Entry<String, LinkedHashMap<String, Double>> entry_EntityAndCatValue : hmap_heuResultNormalized.entrySet()) 
+			{
+				LinkedHashMap<String, Double> lhmap_CatAndValue = entry_EntityAndCatValue.getValue();
+				String str_entityName = entry_EntityAndCatValue.getKey();
+				
+				if (str_entityName.contains(i.toString())&& entry_EntityAndCatValue.getValue().size()>0)
+				{
+					for (Entry<String, Double> entry_CatAndValue : lhmap_CatAndValue.entrySet()) 
+					{
+						hset_Values.add(entry_CatAndValue.getValue());
+					}
+				}
+				
+			}
+			
+			List sortedList = new ArrayList(hset_Values);
+			Collections.sort(sortedList);
+			lhmap_levelsAndValues.put(i, (ArrayList<Double>) sortedList);
+			
+		}
+		
+//		for (Entry<Integer, ArrayList<Double>> entry_EntityAndCatValue : lhmap_levelsAndValues.entrySet()) 
+//		{
+//			System.out.println(entry_EntityAndCatValue.getKey()+" "+ entry_EntityAndCatValue.getValue());
+//		}
+		
 		SortHeuristicResults();// hmap_heuResultNormalizedSorted
+		//printMap(log_normalized, hmap_heuResultNormalizedSorted, heu);
+		
 		filterHeuResults();// hmap_heuResultNormalizedSortedFiltered
-		// printMap(log_normalized, hmap_heuResultNormalizedSortedFiltered,heu);
+		//printMap(log_normalized, hmap_heuResultNormalizedSortedFiltered,heu);
 
 		// System.out.println("Number Of Entities Before Filtering"+
 		// hmap_heuResultNormalizedSorted.size());
@@ -209,6 +241,11 @@ public class CalculatePrecisionAndRecall {
 					str_entityNameAndDepth.length());
 			String str_entityName = str_entityNameAndDepth.substring(0,
 					str_entityNameAndDepth.indexOf(str_depthSeparator));
+			if (str_entityName.equals("leonardo_da_vinci")||str_entityName.equals("wright_brothers")||str_entityName.equals("gutenberg_bible")) 
+			{
+				//System.out.println("YES");
+			}
+			
 			hmap_precisionRecallFmeasure.put(str_entityNameAndDepth,
 					CalculatePrecisionRecallFmeasure(str_entityName, str_depth));
 		}
@@ -437,7 +474,7 @@ public class CalculatePrecisionAndRecall {
 			String str_entity = entry.getKey();
 			LinkedHashMap<String, Double> str_categories = entry.getValue();
 
-			System.out.println(str_entity+ " "+ str_categories);
+			//System.out.println(str_entity+ " "+ str_categories);
 		}
 	}
 
@@ -452,12 +489,11 @@ public class CalculatePrecisionAndRecall {
 				String str_catName = entry_hmapValues.getKey();
 				Double db_value = entry_hmapValues.getValue();
 				Double db_heuValue = 0.0;
-//				 if (enum_heuType.equals(HeuristicType.HEURISTIC_NO))
-//				 {
-//					 db_heuValue = Heuristic_NanHeuristic(db_value);
-//				 }
-				// else 
-					 if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHS)) {
+				 if (enum_heuType.equals(HeuristicType.HEURISTIC_NO))
+				 {
+					 db_heuValue = Heuristic_NanHeuristic(db_value);
+				 }
+				 else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHS)) {
 					db_heuValue = Heuristic_NumberOfPaths(db_value);
 				} else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHSANDDEPTH)) {
 					db_heuValue = Heuristic_NumberOfPathsAndDepth(db_value, Integer.parseInt(str_depth));
