@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DeleteDublicates_3 {
+public class DeleteDublicates {
 
 	
 	static 	String pathMainCategories= System.getProperty("user.dir")+ File.separator+"MainCategoryFile.txt";

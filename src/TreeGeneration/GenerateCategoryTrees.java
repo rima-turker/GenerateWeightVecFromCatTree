@@ -60,7 +60,7 @@ public class GenerateCategoryTrees {
 			File mergedFile = new File(System.getProperty("user.dir")+File.separator+"CategoryTrees"+File.separator+"CategoryTrees_L"
 								+i.toString());
 				mergedFile.createNewFile();
-				GenerateLevelTrees_2.mergeFiles(files,mergedFile);
+				GenerateCategoryCompleteTrees_2.mergeFiles(files,mergedFile);
 			
 		}
 		br_MainCategory.close();
