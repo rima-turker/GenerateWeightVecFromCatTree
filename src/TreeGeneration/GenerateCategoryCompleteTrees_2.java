@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 
-public class GenerateLevelTrees_2 {
+public class GenerateCategoryCompleteTrees_2 {
 
 	/**
 	 * @param args
