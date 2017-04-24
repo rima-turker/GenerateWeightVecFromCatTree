@@ -3,7 +3,7 @@ package TreeGeneration;
 import java.io.File;
 import java.io.IOException;
 
-import TreeGeneration.CalculatePrecisionAndRecall__.HeuristicType;
+import TreeGeneration.CalculatePrecisionAndRecall.HeuristicType;
 
 public class Main {
 
@@ -25,7 +25,7 @@ public class Main {
 			for (HeuristicType heu : HeuristicType.values())
 			{
 				System.out.println("----"+heu+"-----");
-				CalculatePrecisionAndRecall__.main("GoalSet_AllCombined.tsv","Results_All_L7",the,heu);		
+				CalculatePrecisionAndRecall.main("GoalSet_AllCombined.tsv","Results_All_L7",the,heu);		
 			}
 			System.out.println("----------------------------------------");
 		}

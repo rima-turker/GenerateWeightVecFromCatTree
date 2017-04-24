@@ -1,6 +1,7 @@
 package TreeGeneration;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,7 +9,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -20,15 +20,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+
+import TreeGeneration.CalculatePrecisionAndRecall.HeuristicType;
 
 public class CalculatePrecisionAndRecall {
 
-	private static String str_path = System.getProperty("user.dir") + File.separator;
-	private static int int_depthOfTheTree = 7;
-	private static String str_depthSeparator = "__";
+	static String str_path = System.getProperty("user.dir") + File.separator;
+	static int int_depthOfTheTree = 7;
+	static String str_depthSeparator = "__";
 	private static double threshold = 0;
 
 	private static final Logger LOG = Logger.getLogger(CalculatePrecisionAndRecall.class.getCanonicalName());
@@ -44,10 +48,10 @@ public class CalculatePrecisionAndRecall {
 	private static final Map<String, LinkedHashMap<String, Double>> hmap_heuResultNormalized = new LinkedHashMap<>();
 	private static final Map<String, LinkedHashMap<String, Double>> hmap_heuResultNormalizedSorted = new LinkedHashMap<>();
 	private static final Map<String, LinkedHashMap<String, Double>> hmap_heuResultNormalizedSortedFiltered = new LinkedHashMap<>();
-	private static final Map<String, LinkedHashMap<String, Double>> hmap_precisionRecallFmeasure = new LinkedHashMap<>();
-	
-	private static final Map<String, Integer> hmap_entityStartingCat = new LinkedHashMap<>();
 
+	private static final Map<String, LinkedHashMap<String, Double>> hmap_precisionRecallFmeasure = new LinkedHashMap<>();
+
+	private static final Map<String, Integer> hmap_entityStartingCat = new LinkedHashMap<>();
 	enum HeuristicType 
 	{
 		 HEURISTIC_NO,
@@ -103,8 +107,7 @@ public class CalculatePrecisionAndRecall {
 		}
 	
 	public static void main(String str_fileNameGroundTruthList, String str_fileNameTestSet, Double db_threshold,
-			HeuristicType heu) 
-	{
+			HeuristicType heu) {
 		emptyMaps();
 		ReadSubCategoryNumber();
 		threshold = db_threshold;
