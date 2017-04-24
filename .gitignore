@@ -8,3 +8,5 @@ log
 *.txt
 /bin/TreeGeneration/*.class
 /*.csv
+/CategoryTrees/*
+/CategoryTreeFilteredMainFiles/*
