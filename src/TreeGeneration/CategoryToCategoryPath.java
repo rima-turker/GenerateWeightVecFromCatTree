@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 public class CategoryToCategoryPath 
 {
-	final static int levelOfTheTree=GlobalVariables.levelOfTheTree;
+	final static int levelOfTheTree=GlobalVariables.levelOfTheTree+9;
 	final static Map<String,Integer> lhmap_CatToCatPath= new LinkedHashMap<>();
 	
 	public static  void main() throws IOException 
@@ -48,12 +48,14 @@ public class CategoryToCategoryPath
 		}
 		br_MainCategory.close();
 		
+		
 		br_MainCategory = new BufferedReader(new FileReader(pathMainCategories));
 		while ((line_mainCategory = br_MainCategory.readLine()) != null) 
 		{
 			hset_mainCategories.add(line_mainCategory.replace(">", ""));
 		}
 		br_MainCategory.close();
+		//System.out.println("hset_mainCategories"+ hset_mainCategories.size());
 		
 		line_mainCategory = null;
 		br_MainFile = new BufferedReader(new FileReader(sysProperty+ fileSeparator+ "skos_broader_CatCleaned_sort.txt"));
@@ -63,21 +65,24 @@ public class CategoryToCategoryPath
 		{
 			hset_mainFile.add(str_line);
 		}
+		//System.out.println("hset_mainFile"+ hset_mainFile.size());
 		
 		for (String str_mainCategory:hset_mainCategories) 
 		{
+			
+			//System.out.println("str_mainCategory"+ hset_mainCategories.size());
+			
 			String categoryName = str_mainCategory.replace(">", "");
 			//String categoryName="Psychology";
 			
-			//System.out.println("-------------"+categoryName+"-------------");
+			System.out.println("-------------"+categoryName+"-------------");
 			HashSet<String> hsetChildCategory = new HashSet<>();
 			HashSet<String> hsetParents = new HashSet<>();
 			
 			hsetChildCategory.add(categoryName);
 			hset_categoryTree.add(categoryName);
-			for (Integer i = 0; i < levelOfTheTree ; i++) 
+			for (Integer i = 1; i <= levelOfTheTree ; i++) 
 			{
-				br_MainFile = new BufferedReader(new FileReader(sysProperty+ fileSeparator+ "skos_broader_CatCleaned_sort.txt"));
 				int count = 0;
 				
 				for ( String line:hset_mainFile) 
@@ -87,22 +92,37 @@ public class CategoryToCategoryPath
 						String str_parent = line.split(" ")[0].replace(">", "");
 						if (!hset_categoryTree.contains(str_parent)) 
 						{
+							
 							hsetParents.add(str_parent);
 							hset_categoryTree.add(str_parent);
 							if (hset_mainCategories.contains(str_parent)) 
 							{
-								if (lhmap_CatToCatPath.get(categoryName+str_catcatSep+str_parent)==0)
-								{
-									lhmap_CatToCatPath.put(categoryName+str_catcatSep+str_parent, i);
-								}
+								//System.out.println("Inside main loop");
+//								if (categoryName.equals("Arts")&&str_parent.equals("Electronic_games")) 
+//								{
+//									System.out.println("Yes");
+//								}
+									if (lhmap_CatToCatPath.get(categoryName+str_catcatSep+str_parent)==0)
+									{
+//										if (i==1) 
+//										{
+//											System.out.println("i=0");
+//										}
+										lhmap_CatToCatPath.put(str_parent+str_catcatSep+categoryName, i);
+										
+									}
+								
+								
 							}
+//							else
+//								System.out.println(line);
+
 						}
-//						else
-//							System.out.println(str_parent);
+						
 					}
 				}
 
-				//System.out.println("size"+hsetParents.size());
+				System.out.println("size"+hsetParents.size());
 				hsetChildCategory.clear();
 				hsetChildCategory.addAll(hsetParents);
 				hsetParents.clear();
