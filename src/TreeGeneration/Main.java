@@ -17,9 +17,10 @@ public class Main {
 	public static void main(String[] args) throws IOException 
 	{
 		
-		 
+	//	GenerateCategoryLevels_1.main();
+	//	 CategoryToCategoryPath.main();
 		
-		for (double the = 0.1; the <= 0.1; the+=0.1) 
+		for (double the = 0.0; the <= 0.5; the+=0.1) 
 		{
 			System.out.println("--------------------Threshold-------------------"+ the);
 			for (HeuristicType heu : HeuristicType.values())

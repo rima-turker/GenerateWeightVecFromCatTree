@@ -38,7 +38,7 @@ public class GenerateCategoryLevels_1 {
 
 		
 		FileWriter fileWriter;
-		String pathMainCategories= sysProperty+ fileSeparator+"MainCategoryFile.txt";
+		String pathMainCategories= sysProperty+ fileSeparator+"AhmadCatFile.txt";
 
 		br_MainCategory = new BufferedReader(new FileReader(pathMainCategories));
 		String line_mainCategory = null;
@@ -51,7 +51,7 @@ public class GenerateCategoryLevels_1 {
 		{
 			String categoryName = line_mainCategory.replace(">", "");
 
-			File Dir = new File(System.getProperty("user.dir")+File.separator+"CategoryFiles"+File.separator+categoryName+File.separator);
+			File Dir = new File(System.getProperty("user.dir")+File.separator+"CategoryFiles_Ahmad"+File.separator+categoryName+File.separator);
 			
 			if (!Dir.exists()) 
 			{
@@ -63,7 +63,7 @@ public class GenerateCategoryLevels_1 {
 				String number= i.toString();
 
 				
-				 File log = new File(System.getProperty("user.dir")+File.separator+"CategoryFiles"+File.separator+categoryName+File.separator+
+				 File log = new File(System.getProperty("user.dir")+File.separator+"CategoryFiles_Ahmad"+File.separator+categoryName+File.separator+
 						categoryName+"_L"+(Integer.parseInt(number)));
 				
 				if (log.exists()) 
@@ -81,7 +81,7 @@ public class GenerateCategoryLevels_1 {
 				else
 				{
 
-					String pathChildFile= System.getProperty("user.dir")+File.separator+"CategoryFiles"+File.separator+categoryName+
+					String pathChildFile= System.getProperty("user.dir")+File.separator+"CategoryFiles_Ahmad"+File.separator+categoryName+
 							File.separator+categoryName+"_L"+ (Integer.parseInt(number)-1);
 
 
