@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
-import TreeGeneration.CalculatePrecisionAndRecall.HeuristicType;
 
 public class CalculatePrecisionAndRecall {
 
@@ -52,13 +51,7 @@ public class CalculatePrecisionAndRecall {
 	private static final Map<String, LinkedHashMap<String, Double>> hmap_precisionRecallFmeasure = new LinkedHashMap<>();
 
 	private static final Map<String, Integer> hmap_entityStartingCat = new LinkedHashMap<>();
-	enum HeuristicType 
-	{
-		HEURISTIC_NO,
-		HEURISTIC_NUMBEROFPATHS, HEURISTIC_NUMBEROFPATHSANDDEPTH,
-		HEURISTIC_FIRSTFINDFIRSTDEPTH
-		// HEURISTIC_NUMBEROFPATHSANDDEPTHANDSUBCAT;
-	}
+	
 
 	private static void emptyMaps() {
 		hmap_heuResult.clear();
@@ -107,7 +100,7 @@ public class CalculatePrecisionAndRecall {
 	}
 
 	public static void main(String str_fileNameGroundTruthList, String str_fileNameTestSet, Double db_threshold,
-			HeuristicType heu) {
+			GlobalVariables.HeuristicType heu) {
 		emptyMaps();
 		ReadSubCategoryNumber();
 		threshold = db_threshold;
@@ -491,7 +484,7 @@ public class CalculatePrecisionAndRecall {
 		}
 	}
 
-	public static void callHeuristic(HeuristicType enum_heuType) {
+	public static void callHeuristic(GlobalVariables.HeuristicType enum_heuType) {
 		for (Entry<String, LinkedHashMap<String, Double>> entry : hmap_testSet.entrySet()) {
 			String str_entityNameAndDepth = entry.getKey();
 			String str_entityName = str_entityNameAndDepth.substring(0, str_entityNameAndDepth.indexOf(str_depthSeparator));
@@ -503,16 +496,17 @@ public class CalculatePrecisionAndRecall {
 				String str_catName = entry_hmapValues.getKey();
 				Double db_value = entry_hmapValues.getValue();
 				Double db_heuValue = 0.0;
-				if (enum_heuType.equals(HeuristicType.HEURISTIC_NO))
-				{
-					db_heuValue = Heuristic_NanHeuristic(db_value);
-				}
-				else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHS)) {
+//				if (enum_heuType.equals(GlobalVariables.HeuristicType.HEURISTIC_NO))
+//				{
+//					db_heuValue = Heuristic_NanHeuristic(db_value);
+//				}
+//				else 
+					if (enum_heuType.equals(GlobalVariables.HeuristicType.HEURISTIC_NUMBEROFPATHS)) {
 					db_heuValue = Heuristic_NumberOfPaths(db_value);
-				} else if (enum_heuType.equals(HeuristicType.HEURISTIC_NUMBEROFPATHSANDDEPTH)) {
+				} else if (enum_heuType.equals(GlobalVariables.HeuristicType.HEURISTIC_NUMBEROFPATHSANDDEPTH)) {
 					db_heuValue = Heuristic_NumberOfPathsAndDepth(db_value, Integer.parseInt(str_depth));
 				}
-				else if(enum_heuType.equals(HeuristicType.HEURISTIC_FIRSTFINDFIRSTDEPTH))
+				else if(enum_heuType.equals(GlobalVariables.HeuristicType.HEURISTIC_FIRSTFINDFIRSTDEPTH))
 				{
 					db_heuValue = Heuristic_FirstPathsAndDepth(str_entityName,db_value, Integer.parseInt(str_depth)) ;
 				}
@@ -735,7 +729,7 @@ public class CalculatePrecisionAndRecall {
 		}
 	}
 
-	public static void printMap(Logger log, Map<String, LinkedHashMap<String, Double>> hmapHeuresultnormalized, HeuristicType heu) {
+	public static void printMap(Logger log, Map<String, LinkedHashMap<String, Double>> hmapHeuresultnormalized, GlobalVariables.HeuristicType heu) {
 
 		for (Entry<String, LinkedHashMap<String, Double>> entry : hmapHeuresultnormalized.entrySet()) 
 		{
