@@ -2,8 +2,11 @@ package TreeGeneration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
-import TreeGeneration.CalculatePrecisionAndRecall.HeuristicType;
 
 public class Main {
 
@@ -19,19 +22,28 @@ public class Main {
 		
 	//	GenerateCategoryLevels_1.main();
 	//	 CategoryToCategoryPath.main();
+		ReadResultsFromFilteredFiles.createCategoryMap();
 		
-		for (double the = 0.0; the <= 0.5; the+=0.1) 
-		{
-			System.out.println("--------------------Threshold-------------------"+ the);
-			for (HeuristicType heu : HeuristicType.values())
-			{
-				System.out.println("----"+heu+"-----");
-				CalculatePrecisionAndRecall.main("GoalSet_AllCombined.tsv","Results_All_L7",the,heu);		
-			}
-			System.out.println("----------------------------------------");
-		}
-		
-		
+//		System.out.println("hmap_testSetAddResourcePathsAlsoReverse");
+//		for (double the = 0.1; the <= 0.6; the+=0.1) 
+//		{
+//			System.out.println("--------------------Threshold-------------------"+ the);
+//			for (GlobalVariables.HeuristicType heu : GlobalVariables.HeuristicType.values())
+//			{
+//				//System.out.println("----"+heu+"-----");
+//				EvaluateHeuristicFunctions.main("GoalSet_AllCombined.tsv","Results_All_L7",the,heu);		
+//			}
+//			System.out.println("----------------------------------------");
+//		}
+//		
+//		 
+//	           
+//	     List<Double> list = new ArrayList<Double>(EvaluateHeuristicFunctions.hset_fmeasure);
+//	     java.util.Collections.sort(list);
+//	       // Displaying list
+//	     
+//	     
+//	     System.out.println("HashSet elements after sorting: "+Collections.max(list));
 		
 		
 //		ReadResults.ReadResultFromAllFile("Example_2"+File.separator+"file_David",

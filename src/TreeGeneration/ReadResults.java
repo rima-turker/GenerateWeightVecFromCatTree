@@ -37,6 +37,101 @@ public class ReadResults {
 	private static final Map<String, ArrayList<Double>> hmap_subCategoryCount = new HashMap<>();
 	private static final LinkedHashMap<String, Map<Integer, List<String>>> hmap_entityCategoryCount = new LinkedHashMap<>();
 
+	public static HashMap<String, HashMap<String, Double>> ReadResultFromDifferentFileEntAndCat(String str_FileName) 
+	{
+		HashMap<String,HashMap<String,Double >> hmap_entitCatPath = new HashMap<>();
+		HashSet<String> hset_fileContent = new HashSet<>();
+		HashSet<String> hset_entity = new HashSet<>();
+		try 
+		{
+			BufferedReader br = new BufferedReader(new FileReader(path+str_FileName));
+			BufferedReader br_entityList = new BufferedReader(new FileReader(path+"EntityList.txt"));
+			
+			ArrayList<String> arrList_fileContent = new ArrayList<>();
+			String lineCategory,str_entity;
+
+			while ((str_entity = br_entityList.readLine()) != null) 
+			{
+				hset_entity.add(str_entity.toLowerCase());
+			}
+			br_entityList.close();
+			
+			while ((lineCategory = br.readLine()) != null) 
+			{
+				arrList_fileContent.add(lineCategory.toLowerCase());
+//				if (hset_fileContent.contains(lineCategory)) 
+//				{
+//					System.out.println(lineCategory);
+//				}
+				//hset_fileContent.add(lineCategory);
+			}
+			
+			
+			for (int i = 0; i < arrList_fileContent.size(); i++) 
+			{
+				String str_entityName = arrList_fileContent.get(i).substring(0, arrList_fileContent.get(i).indexOf("> "));
+				HashMap<String, Double> hmap_catAndVal = new HashMap<>();
+				if (!hmap_entitCatPath.containsKey(str_entityName)) 
+				{
+					for (int j = 0; j < arrList_fileContent.size(); j++) 
+					{
+						if (arrList_fileContent.get(j).substring(0, arrList_fileContent.get(j).indexOf("> ")).equals(str_entityName))
+						{
+							
+							String[] str_split = arrList_fileContent.get(j).split("> "); 
+							String str_catName= str_split[str_split.length-2];
+							if (hmap_catAndVal.containsKey(str_catName)) 
+							{
+								Double int_tempValue= hmap_catAndVal.get(str_catName);
+								hmap_catAndVal.put(str_catName, ++int_tempValue);
+							}
+							else
+							{
+								hmap_catAndVal.put(str_catName, 1.0);
+							}
+							
+						}
+					}
+					if (hset_entity.contains(str_entityName))
+					{
+						hmap_entitCatPath.put(str_entityName, hmap_catAndVal);
+					}
+					
+					
+				}
+				//else
+					//System.out.println(str_entityName);
+				
+			}
+
+			br.close();
+         
+        int int_count=0;
+        for (Entry<String, HashMap<String, Double>> entry:hmap_entitCatPath.entrySet()) 
+        {
+			//HashMap<String, Integer> hmap_catAndVal = entry.getValue();
+			if (hset_entity.contains(entry.getKey())) 
+			{
+				//System.out.println(entry.getKey()+" "+ entry.getValue());
+				int_count++;
+			}
+			
+
+        }
+        
+//       System.out.println();
+//       System.out.println(int_count);
+		} 
+		catch (Exception e) 
+		{
+			// TODO: handle exception
+		}
+		//EvaluateHeuristicFunctions.printMap(hmap_entitCatPath);
+		return hmap_entitCatPath;
+
+	}
+	
+	
 	public static void ReadResultFromAllFile(String fileName,String famEntities) {
 
 		path += fileName;

@@ -109,6 +109,7 @@ public class EvaluateHeuristicFunctions {
 		//printMap(hmap_testSet);
 		//EntityAsObj_CatFiltered_reverse
 		
+		
 		LinkedHashMap<String, HashMap<String, Double>> hmap_testSetDistinctPaths= testSetDistinctPaths(hmap_testSetInitial);
 		
 		
@@ -123,6 +124,8 @@ public class EvaluateHeuristicFunctions {
 		
 		//printMapOrdered(ReadCleanFileRemoveCircles.testSetForEntities(),hmap_testSetDistinctPaths);
 		Map<String, LinkedHashMap<String, Double>> hmap_heuResult=callHeuristic(hmap_testSetAddResourcePathsAlsoReverse);// hmap_heuResult
+		
+		
 		//printMap(hmap_heuResult);
 		//discoverIrrelaventPaths(hmap_heuResult);
 		Map<String, LinkedHashMap<String, Double>> hmap_addCatValuesTillDepth= addCatValuesTillDepth(hmap_heuResult);

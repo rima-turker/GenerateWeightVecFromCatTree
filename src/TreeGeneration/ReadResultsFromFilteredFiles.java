@@ -18,7 +18,8 @@ public class ReadResultsFromFilteredFiles
 
 	public ReadResultsFromFilteredFiles(String str_fileName)
 	{
-		HashMap<String, HashSet<String>> hmap_categoryMap = new HashMap<>(createCategoryMap());
+		ReadResults(new HashMap<>(createCategoryMap()),str_fileName);
+		
 	}
 
 
@@ -72,69 +73,42 @@ public class ReadResultsFromFilteredFiles
 
 
 
-	private static HashMap<String, HashSet<String>> ReadResults() 
+	private static HashMap<String, HashSet<String>> ReadResults(HashMap<String, HashSet<String>> hmap_categoryMap,String str_fileName) 
 	{
 		long startTime = System.nanoTime();
 
-		HashMap<String, HashSet<String>> hmap_categoryMap = new HashMap<>();
 		try 
 		{
-			BufferedReader br_MainCategory = new BufferedReader(new FileReader(GlobalVariables.path_MainCategories));
+			BufferedReader br_MainFile = new BufferedReader(new FileReader(str_fileName));
 			String line_mainCategory = null;
 			String line=null;
-			while ((line_mainCategory = br_MainCategory.readLine()) != null) 
+			while ((line_mainCategory = br_MainFile.readLine()) != null) 
 			{
-				System.out.println(line_mainCategory);
-				String str_mainCategoryName = line_mainCategory.replace(">", "").toLowerCase();
-				HashSet<String> hset_allCatsInTree = new HashSet<>();
-
-				for (int i = 1; i <= GlobalVariables.levelOfTheTree ; i++) 
+				
+				for(Entry<String, HashSet<String>>  entry_CatAndSubs : hmap_categoryMap.entrySet())
 				{
-					HashSet<String> hset_tempCats = new HashSet<>();
-					String str_depth=Integer.toString(i);
-					String str_catAndLevel = str_mainCategoryName+GlobalVariables.str_depthSeparator+str_depth;
-					if (i==1) 
+					String str_Cat = entry_CatAndSubs.getKey().substring(0,entry_CatAndSubs.getKey().indexOf(GlobalVariables.str_depthSeparator));
+					String str_depth = entry_CatAndSubs.getKey().substring(entry_CatAndSubs.getKey().indexOf(GlobalVariables.str_depthSeparator,entry_CatAndSubs.getKey().length()-1));
+					HashSet<String> hset_subCats = new HashSet<>(entry_CatAndSubs.getValue());
+					int count =0;
+					
+					for(String str_subcat: hset_subCats)
 					{
-						hset_tempCats.add(str_mainCategoryName);
-						hset_allCatsInTree.add(str_mainCategoryName);
-					}
-					else
-					{
-						int int_childDepth = i-1;
-
-						HashSet<String> hsetParents = new HashSet<>(hmap_categoryMap.get(str_mainCategoryName+GlobalVariables.str_depthSeparator+Integer.toString(int_childDepth)));
-						BufferedReader br_MainFile = new BufferedReader(new FileReader(GlobalVariables.path_SkosFile));
-
-						//						while ((line = br_MainFile.readLine()) != null)
-						//						{
-						//								if (hsetChildCategory.contains(line.split(" ")[1]))
-						//								{
-						//
-						//									hsetParents.add(line.split(" ")[0]);
-						//								}
-						//						}
-
-
-
-						while ((line = br_MainFile.readLine()) != null)
+						if (hset_subCats.contains(line_mainCategory.split(" ")[1])) 
 						{
-							String str_parent = line.split(" ")[1].replace(">", "").toLowerCase();
-							String str_child =line.split(" ")[0].replace(">", "").toLowerCase();
-							if (hsetParents.contains(str_parent)&& !hset_allCatsInTree.contains(str_child))
-							{
-								hset_tempCats.add(str_child);
-								hset_allCatsInTree.add(str_child);
-
-							}
+							count++;
+							System.out.println();
 						}
-						br_MainFile.close();
 					}
-					hmap_categoryMap.put(str_catAndLevel, hset_tempCats);
-					System.out.println(" "+Integer.toString(i)+" child size "+hset_tempCats.size());
+					System.out.println("Counter "+count+);
+				
 				}
+				
+				
+				
 			}
 			System.out.println();
-			br_MainCategory.close();
+			br_MainFile.close();
 		} 
 		catch (IOException e) {
 			// TODO Auto-generated catch block
