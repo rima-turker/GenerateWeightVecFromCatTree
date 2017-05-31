@@ -17,7 +17,7 @@ public class CreateCategoryTrees
 	public static void main(String[] args) throws IOException 
 	{
 		Map<String, HashSet<String>> hmap_catMap = new HashMap<>(createCategoryTrees());
-		//writeCategoryTreeToAFile(hmap_catMap, "CategoryTrees");
+		//writeCategoryTreeToAFile(hmap_catMap, "CategoryTrees_6");
 	}
 	
 	private static HashMap<String, HashSet<String>> createCategoryTrees() 
@@ -106,7 +106,7 @@ public class CreateCategoryTrees
 			for (Entry<String, HashSet <String>> entry: hmap.entrySet()) 
 			{
 				String str_entName = entry.getKey();
-				File file = new File(GlobalVariables.path_Local+str_folderName+ str_entName);
+				File file = new File(GlobalVariables.path_Local+ str_entName);
 				file.createNewFile();
 				BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, false));
 				
