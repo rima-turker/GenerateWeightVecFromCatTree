@@ -17,26 +17,31 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class CreateWeightVectorString_3 {
+
+	
+	//static String fileName="infoBoxCleaned_OnlyCategoryFiltered_sort_L";
 	
 	static String fileName="pageLinkCleaned_OnlyCategoryFiltered_L";
+	
+//	static String pathResultFile=System.getProperty("user.dir")+ File.separator+"CategoryTreeFilteredMainFiles" +
+//			File.separator+"pageLinkCleaned_OnlyCategoryFiltered_L";
 	
 	static String pathResultFile=System.getProperty("user.dir")+ File.separator+"CategoryTreeFilteredMainFiles" +
 			File.separator+fileName;
 
 	
-	private static String CATEGORY_FOLDER = System.getProperty("user.dir")+ File.separator+"CategoryTrees";  
+	private static String CATEGORY_FOLDER = System.getProperty("user.dir")+ File.separator+"CategoryFiles";  
 	private static String VECTOR_FOLDER = System.getProperty("user.dir")+ File.separator+"Vectors"; 
 
 	private static Map<String,Integer> categoryPlaceHolder = new LinkedHashMap<>();
 	private static final Map<String,HashSet<String>> categoryMap = new HashMap<>();
-	
 	public static void main() throws FileNotFoundException 
 	{	
 		for (int i = 0; i < GlobalVariables.levelOfTheTree; i++) 
 		{
 			createCategoryMap(i);
 			final Map<String,int[]> entityMap = generateWeightVector(i);
-			//writeWieghtVectorToFile(entityMap,i);
+			writeWieghtVectorToFile(entityMap,i);
 			System.err.println("Iteration "+i+" is done");
 			categoryMap.clear();
 			System.err.println(entityMap.size());
@@ -56,7 +61,8 @@ public class CreateWeightVectorString_3 {
 		
 	}
 
-	private static void writeWieghtVectorToFile(Map<String, int[]> entityMap, int i) {
+	private static void writeWieghtVectorToFile(
+			Map<String, int[]> entityMap, int i) {
 		BufferedWriter bw = null;
 		FileWriter fw = null;
 		try {
@@ -97,16 +103,13 @@ public class CreateWeightVectorString_3 {
 	}
 
 
-	private static Map<String,int[]> generateWeightVector(int i) 
-	{
+	private static Map<String,int[]> generateWeightVector(int i) {
 		final Map<String,int[]> entityMap = new LinkedHashMap<>();
 		final String pathFile= pathResultFile + String.valueOf(i); 
 		BufferedReader br = null;
-		FileReader fr = null;
 		String sCurrentLine = null;
 		try {
-			fr = new FileReader(pathFile);
-			br = new BufferedReader(fr);
+			br = new BufferedReader(new FileReader(pathFile));
 			while ((sCurrentLine = br.readLine()) != null) {			
 					final String[] tokens = sCurrentLine.trim().split(" ");
 					final String entityName = tokens[0];
@@ -116,39 +119,25 @@ public class CreateWeightVectorString_3 {
 //						System.err.println(entityName);
 //					}
 					int map[] = entityMap.get(entityName);
-					final List<String> returnedCategoryName = getCategoryName(categoryName);
-					
-					if (returnedCategoryName.size()>2) 
-					{
-						for(String mainCategory: returnedCategoryName)
-						{
-							
-							System.out.println(categoryName+"-->"+mainCategory);
-						}
-					}
-					
-					if(map == null) 
-					{
+					if(map == null) {
 						map = new int[categoryPlaceHolder.size()];
+						final List<String> returnedCategoryName = getCategoryName(categoryName);
 						if(returnedCategoryName.isEmpty()) {
 							//throw new IllegalArgumentException("Category not found.");
 							continue;
 						}
 						for(String mainCategory: returnedCategoryName){
-							
 							map[categoryPlaceHolder.get(mainCategory)] =  1;
 						}
 						entityMap.put(entityName, map);
-					}
-					else 
-					{
+					}else {
+						final List<String> returnedCategoryName = getCategoryName(categoryName);
 						if(returnedCategoryName.isEmpty()) {
 							//throw new IllegalArgumentException("Category not found.");
 							continue;
 						}				
 						for(String mainCategory: returnedCategoryName){
 							map[categoryPlaceHolder.get(mainCategory)]+=1;
-							//System.out.println("entityName"+ entityName+ ": "+categoryName);
 						}
 						entityMap.put(entityName, map);
 					}
@@ -159,8 +148,7 @@ public class CreateWeightVectorString_3 {
 			try {
 				if (br != null)
 					br.close();
-				if (fr != null)
-					fr.close();
+				
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
@@ -199,7 +187,7 @@ public class CreateWeightVectorString_3 {
 			BufferedReader br = null;
 			FileReader fr = null;
 			try {
-				final String file = CATEGORY_FOLDER+File.separator+subCategoryFolder.getName()+File.separator+fileName;	
+				final String file = CATEGORY_FOLDER+"/"+subCategoryFolder.getName()+File.separator+fileName;	
 				fr = new FileReader(file);
 				br = new BufferedReader(fr);
 				String sCurrentLine;
