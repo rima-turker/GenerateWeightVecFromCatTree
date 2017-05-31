@@ -1,76 +1,48 @@
 package TreeGeneration;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-
 
 public class Main {
 
-	/**
-	 * @param args
-	 * @throws IOException 
-	 */
-	
-	final static String str_ExampleNo="3";
-	
-	public static void main(String[] args) throws IOException 
-	{
+	final private String str_ExampleNo = "3";
+	final private static String str_fileReadResult_1 = "CatTree_7FilteredMainFiles"+File.separator+"pagelinks_CategoryTreeFilteredtill_7";
+//	final private static String str_fileReadResult_2 = "CatTree_7FilteredMainFiles"+File.separator+"infoBox_CategoryTreeFilteredtill_7";
+	final private static String str_fileReadResult_2 = "infoBox_CategoryTreeFilteredtill_7";
+	final private static String str_fileReadResult_3 = "pageLinks_CategoryTreeFilteredtill_7";
+														//pagelinks_CategoryTreeFilteredtill_7
+	//"infoBoxCleaned_OnlyCategoryFiltered_sort"
+	public static void main(String[] args) throws Exception {
 		
-	//	GenerateCategoryLevels_1.main();
-	//	 CategoryToCategoryPath.main();
-		ReadResultsFromFilteredFiles.createCategoryMap();
+		ReadResultsFromFilteredFiles read = new ReadResultsFromFilteredFiles();
+		//WriteReadFromFile.writeMapToAFile(read.ReadResults(read.createCategoryMap(), str_fileReadResult_3),"WeightVector_7");
+		WriteReadFromFile.writeMapToAFile(read.ReadResults_withLevel(read.createCategoryMap(), str_fileReadResult_3),"WeightVector_7_withSubCatNumbers");
+		System.out.println("Finished");
 		
-//		System.out.println("hmap_testSetAddResourcePathsAlsoReverse");
-//		for (double the = 0.1; the <= 0.6; the+=0.1) 
-//		{
-//			System.out.println("--------------------Threshold-------------------"+ the);
-//			for (GlobalVariables.HeuristicType heu : GlobalVariables.HeuristicType.values())
-//			{
-//				//System.out.println("----"+heu+"-----");
-//				EvaluateHeuristicFunctions.main("GoalSet_AllCombined.tsv","Results_All_L7",the,heu);		
+//		double the;
+//		
+//		for ( the = 0.05; the<=0.09; the += 0.01) {
+//			 System.out.println("--------------------Threshold-------------------"+
+//			the);
+//			for (GlobalVariables.HeuristicType heu : GlobalVariables.HeuristicType.values()) {
+//			     new EvaluateHeuristicFunctions<Object>("GoalSet_AllCombined.tsv", the, heu).main();
 //			}
-//			System.out.println("----------------------------------------");
 //		}
 //		
-//		 
-//	           
-//	     List<Double> list = new ArrayList<Double>(EvaluateHeuristicFunctions.hset_fmeasure);
-//	     java.util.Collections.sort(list);
-//	       // Displaying list
-//	     
-//	     
-//	     System.out.println("HashSet elements after sorting: "+Collections.max(list));
-		
-		
-//		ReadResults.ReadResultFromAllFile("Example_2"+File.separator+"file_David",
-//				"Example_2"+File.separator+"FamEntitiesAnCat_2 (copy)");
-		//GenerateLevelTrees_2.main();
-		//CountLines.CountUniqueCategories();
-		//GenerateCategoryTrees.main();
-		//CompareTwoFiles.main();
-		//CreateWeightVectorString.main();
-		//String pathMainCategories= System.getProperty("user.dir") + File.separator+"MainCategoryFile.txt";
-		
-//		ReadResults.ReadResultFromAllFile("FamEntAndResults"+File.separator+"FamEntitiesAndCats_2_Result_L7",
-//								"FamEntAndResults"+File.separator+"FamEntitiesAnCat_2");
-		
-		//FamEntities_2.txt
-		//ReadResults.ReadResultFromCVSFile("ResultsL6_sort.csv","SubCategory_Count.csv");
-		//ReadResults.ReadResultFromCVSFile("Example_2"+File.separator+"ResultsL7.csv","SubCategory_Count.csv");
-		
-//		ReadResults.ReadResultFromAllFile("Example_3"+File.separator+"FamEntitiesAndCats_3_Result_L7",
-//		"Example_3"+File.separator+"EntityCategory_Famous_3.csv");
-		
-		
-		
-//		ReadResults.ReadResultFromCVSFile("Example_"+str_ExampleNo+File.separator+"ResultsL7_Ex"+str_ExampleNo+".csv","SubCategory_Count.csv");
-//		CalculatePrecisionAndRecall.main("Example_"+str_ExampleNo+File.separator+"GoalSet_Example_"+str_ExampleNo+"_Mary.csv");
-//		CalculatePrecisionAndRecall.MergeTwoFromatedResultFiles(new File("Example_"+str_ExampleNo+File.separator+"ResultsL7_Ex"+str_ExampleNo+".csv_splitResults"), 
-//											new File("Example_"+str_ExampleNo+File.separator+"GoalSet_Example_"+str_ExampleNo+"_Mary.csv_PAndR"));
-		
+//		Map<String, Double> hmap_fmeasure = new HashMap<>();
+//		hmap_fmeasure=MapUtil.entriesSortedByValues(EvaluateHeuristicFunctions.hmap_fmeasureAll);
+//		
+//		for (Entry <String, Double>   entry: hmap_fmeasure.entrySet()) 
+//		{
+//			System.out.println(entry.getKey()+" "+entry.getValue());
+//		}
+//		List<Double> sortedList = new ArrayList<Double>(EvaluateHeuristicFunctions.hset_fmeasure);
+//		Collections.sort(sortedList);
+//		
+//		for (int i =sortedList.size()-1; i>=20 ; i--) 
+//		{
+//			System.out.println(sortedList.get(i));
+//		}
+
 	}
-}											
+}
+	 
