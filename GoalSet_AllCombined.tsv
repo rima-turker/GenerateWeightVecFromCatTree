@@ -1,4 +1,3 @@
-Entity	Blog Category	Combined Ground Truth			
 Anne_Claude_de_Caylus	Archaeology	Politics	Arts		
 Gertrude_Caton_Thompson	Archaeology				
 Howard_Carter	Archaeology	History			
@@ -76,8 +75,7 @@ World_of_Warcraft	Electronic_games
 Socrates	Philosophy	Literature	History	politics	
 Friedrich_Eduard_Beneke	Philosophy	psychology			
 Plato	Philosophy	Literature	Politics		
-August_Sander	Photography	Arts			
-August_Sander	Photography				
+August_Sander	Photography	Arts				
 Nadar_(photographer)	Photography	Arts			
 Albert_Einstein	Physics	mathematics	astronomy		
 Julian_Schwinger	Physics				
@@ -92,12 +90,11 @@ Ottmar_Mergenthaler	Printing	Inventions	engineering
 Alois_Senefelder	Printing	Inventions	engineering		
 Gutenberg_Bible	Printing	Literature	history		
 Frederic_Bartlett	Psychology				
-Sigmund_Freud	Psychology	Medicine	Philosophy		
-William_Wilson	Transport	engineering			
+Sigmund_Freud	Psychology	Medicine	Philosophy			
 Tower_Subway	Transport				
 Alice_Huyler_Ramsey	Transport	Communication			
 Florence_R._Sabin	Medicine	Women_scientists			
-Irene_Joliot-Curie	Chemistry	Physics	Women_scientists		
+Irène_joliot-curie	Chemistry	Physics	Women_scientists		
 Grace_Hopper	Computer_science	Women_scientists	Inventions		
 Carl_Hagenbeck	Zoology				
 Rudolf_Leuckart	Zoology	biology			

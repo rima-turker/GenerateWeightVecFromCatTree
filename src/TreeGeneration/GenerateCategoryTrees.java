@@ -38,6 +38,8 @@ public class GenerateCategoryTrees {
 		Integer int_fileIndex=0;
 		String categoryName=null;
 		
+		
+		
 		for (Integer i = 0; i < level; i++) 
 		{
 			files=new File[categoryNCount];
@@ -60,7 +62,7 @@ public class GenerateCategoryTrees {
 			File mergedFile = new File(System.getProperty("user.dir")+File.separator+"CategoryTrees"+File.separator+"CategoryTrees_L"
 								+i.toString());
 				mergedFile.createNewFile();
-				GenerateCategoryCompleteTrees_2.mergeFiles(files,mergedFile);
+				GenerateLevelTrees_2.mergeFiles(files,mergedFile);
 			
 		}
 		br_MainCategory.close();
