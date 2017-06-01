@@ -21,7 +21,6 @@ public class CompareTwoFiles {
 	 * @param args
 	 * @throws IOException 
 	 */
-	//AllCategoryAllLevel_L0_sort
 	static String pathTree= System.getProperty("user.dir")+File.separator+"CategoryTrees"+File.separator+"CompleteTree_L";
 	static String pathZipFile= System.getProperty("user.dir")+File.separator+"PageInfoFile.zip";
 
@@ -89,9 +88,7 @@ public class CompareTwoFiles {
 							count++;
 							if (hsetCategory.contains(lineMain.split(" ")[1]))
 							{
-								//									//System.out.println(lineMain);
-								//	        					    bufferedWriter.write(lineMain);
-								//	        					    bufferedWriter.newLine();
+							
 								hsetResult.add(lineMain);
 							}
 							//System.out.println(lineMain);
