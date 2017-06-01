@@ -19,8 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
 
 public class ReadResults {
 	static String path = System.getProperty("user.dir") + File.separator;
@@ -37,6 +38,7 @@ public class ReadResults {
 	private static final Map<String, ArrayList<Double>> hmap_subCategoryCount = new HashMap<>();
 	private static final LinkedHashMap<String, Map<Integer, List<String>>> hmap_entityCategoryCount = new LinkedHashMap<>();
 
+	
 	public static HashMap<String, HashMap<String, Double>> ReadResultFromDifferentFileEntAndCat(String str_FileName) 
 	{
 		HashMap<String,HashMap<String,Double >> hmap_entitCatPath = new HashMap<>();
@@ -126,12 +128,9 @@ public class ReadResults {
 		{
 			// TODO: handle exception
 		}
-		//EvaluateHeuristicFunctions.printMap(hmap_entitCatPath);
 		return hmap_entitCatPath;
 
-	}
-	
-	
+	}	
 	public static void ReadResultFromAllFile(String fileName,String famEntities) {
 
 		path += fileName;

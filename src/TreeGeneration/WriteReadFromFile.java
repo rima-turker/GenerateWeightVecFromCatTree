@@ -16,9 +16,30 @@ import java.util.Map.Entry;
 
 public class WriteReadFromFile 
 {
+	/*
+	 * This function only reads entites and their corresponding categories no value
+	 * like ground truth list or for each entity top 3
+	 */
 	
-
-	
+	static ArrayList<String> readFileToList(String str_fileName) 
+	{
+		ArrayList<String> arrList_result = new ArrayList<>();
+		String line=null;
+		try {
+			BufferedReader br_MainFile = new BufferedReader(new FileReader(GlobalVariables.path_Local+File.separator+str_fileName));
+			while ((line = br_MainFile.readLine()) != null) 
+			{
+				line= line.toLowerCase();
+				arrList_result.add(line.replaceAll(">", ""));
+				//hmap_result.put(line.split(" ")[0].replace(">", ""), line.split(" ")[1].replace(">", ""));
+			}
+			br_MainFile.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return arrList_result;
+	}
 	public static Map<String, HashSet<String>> readEntitiesAndCats(String fileName) {
 		
 		Map<String, HashSet<String>> hmap_groundTruthlist = new LinkedHashMap<>();

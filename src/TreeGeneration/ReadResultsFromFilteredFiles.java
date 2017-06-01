@@ -6,24 +6,23 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class ReadResultsFromFilteredFiles 
 {
 	private HashSet<String> hset_allCats;
 
-	public ReadResultsFromFilteredFiles()
+	public ReadResultsFromFilteredFiles(String str_fileName)
 	{
+		ReadResults(new HashMap<>(createCategoryMap()),str_fileName);
 		hset_allCats = new HashSet<>();
-		
 	}
+
+	
 	public  HashMap<String, HashSet<String>> createCategoryMap() 
 	{
 		final File categoryFolder = new File("CategoryTrees");
@@ -37,7 +36,7 @@ public class ReadResultsFromFilteredFiles
 			while ((line_mainCategory = br_MainCategory.readLine()) != null) 
 			{
 				String str_mainCat = line_mainCategory.replace(">", "").toLowerCase();
-				//System.out.println(str_mainCat);
+				System.out.println(str_mainCat);
 
 				for(int i=1 ; i<=GlobalVariables.levelOfTheTree; i++)
 				{
@@ -56,186 +55,72 @@ public class ReadResultsFromFilteredFiles
 
 					hmap_categoryMap.put(str_mainCat+GlobalVariables.str_depthSeparator
 							+i, new HashSet<>(content));
-					//System.out.println(" "+Integer.toString(i)+" child size "+content.size());
+					System.out.println(" "+Integer.toString(i)+" child size "+content.size());
 
 				}
+
 			}
 			System.out.println(getHset_allCats().size());
 			br_MainCategory.close();
 
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			// TODO: handle exception
 		}
-		
+
 		return hmap_categoryMap;
 	}
 
 
-	public HashMap<String, HashMap<String, Integer>> ReadResults(HashMap<String, HashSet<String>> hmap_categoryMap,String str_fileName) 
+
+	private static HashMap<String, HashSet<String>> ReadResults(HashMap<String, HashSet<String>> hmap_categoryMap,String str_fileName) 
 	{
 		long startTime = System.nanoTime();
-		HashMap<String, HashMap<String, Integer>> hmap_result = new HashMap<>(); 
-		
+
 		try 
 		{
 			BufferedReader br_MainFile = new BufferedReader(new FileReader(str_fileName));
 			String line_mainCategory = null;
-			int count = 0;
+			String line=null;
 			while ((line_mainCategory = br_MainFile.readLine()) != null) 
 			{
-				String str_entName= line_mainCategory.split(" ")[0];
-				String str_entCat= line_mainCategory.split(" ")[1];
-				Map<Integer,String> hmap_mainCat= getCategoryName(str_entCat, hmap_categoryMap);
-				if (hmap_mainCat.isEmpty()) 
+				
+				for(Entry<String, HashSet<String>>  entry_CatAndSubs : hmap_categoryMap.entrySet())
 				{
-					System.err.println("Main category could not found.");
+					String str_Cat = entry_CatAndSubs.getKey().substring(0,entry_CatAndSubs.getKey().indexOf(GlobalVariables.str_depthSeparator));
+					String str_depth = entry_CatAndSubs.getKey().substring(entry_CatAndSubs.getKey().indexOf(GlobalVariables.str_depthSeparator,entry_CatAndSubs.getKey().length()-1));
+					HashSet<String> hset_subCats = new HashSet<>(entry_CatAndSubs.getValue());
+					int count =0;
 					
-				}
-				
-				HashMap<String, Integer>  hmap_catAndVal = new HashMap<>();
-				
-				if (!hmap_result.containsKey(str_entName)) 
-				{
-					for(Entry<Integer,String>  entry_depthAndCat : hmap_mainCat.entrySet())
+					for(String str_subcat: hset_subCats)
 					{
-						hmap_catAndVal.put(entry_depthAndCat.getValue(), 1);
-					}
-				}
-				else
-				{
-					hmap_catAndVal = new HashMap<>(hmap_result.get(str_entName));
-					for(Entry<Integer,String>  entry_depthAndCat : hmap_mainCat.entrySet())
-					{
-						//int int_depth = entry_depthAndCat.getKey();
-						String str_cat = entry_depthAndCat.getValue();
-						
-						if (hmap_catAndVal.containsKey(str_cat)) 
+						if (hset_subCats.contains(line_mainCategory.split(" ")[1])) 
 						{
-							int int_old =hmap_catAndVal.get(str_cat); 
-							hmap_catAndVal.put(str_cat, int_old+1);
-						}
-						else
-						{
-							hmap_catAndVal.put(str_cat, 1);
+							count++;
+							System.out.println();
 						}
 					}
+					System.out.println("Counter "+count);
+				
 				}
 				
-				hmap_result.put(str_entName, hmap_catAndVal);
+				
 				
 			}
-			System.out.println("size of the map"+hmap_result.size() );
+			System.out.println();
 			br_MainFile.close();
 		} 
 		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		long stopTime = System.nanoTime();
 		System.out.println("Time" + (stopTime - startTime)/1000000000);
-		return hmap_result;
+		return hmap_categoryMap;
+
 	}
-	
-	public HashMap<String, HashMap<Integer,HashMap<String, Integer>>> ReadResults_withLevel(HashMap<String, HashSet<String>> hmap_categoryMap,String str_fileName) 
-	{
-		long startTime = System.nanoTime();
-		HashMap<String, HashMap<Integer,HashMap<String, Integer>>> hmap_result = new HashMap<>(); 
-		
-		/*
-		 * EntNameAndDepth, Cat , Val
-		 */
-		try 
-		{
-			BufferedReader br_MainFile = new BufferedReader(new FileReader(str_fileName));
-			String line_mainCategory = null;
-			int count = 0;
-			while ((line_mainCategory = br_MainFile.readLine()) != null) 
-			{
-				//count++;
-				String str_entName= line_mainCategory.split(" ")[0];
-				String str_entCat= line_mainCategory.split(" ")[1];
-				Map<Integer,String> hmap_mainCat= getCategoryName(str_entCat, hmap_categoryMap);
-				if (hmap_mainCat.isEmpty()) {
-					
-					System.err.println("Main category could not found.");
-					
-				}
-				
-				HashMap<Integer, HashMap<String, Integer>>   hmap_DepthCatAndVal = new HashMap<>();
-				
-				if (!hmap_result.containsKey(str_entName)) 
-				{
-					
-					for(Entry<Integer,String>  entry_depthAndCat : hmap_mainCat.entrySet())
-					{
-						HashMap<String , Integer> hmap_catAndVal = new HashMap<>();
-						hmap_catAndVal.put(entry_depthAndCat.getValue(), 1);
-						hmap_DepthCatAndVal.put(entry_depthAndCat.getKey(), hmap_catAndVal);
-					}
-				}
-				else
-				{
-					hmap_DepthCatAndVal = new HashMap<>(hmap_result.get(str_entName));
-					for(Entry<Integer,String>  entry_depthAndCat : hmap_mainCat.entrySet())
-					{
-						int int_depth = entry_depthAndCat.getKey();
-						String str_cat = entry_depthAndCat.getValue();
-						
-						if (hmap_DepthCatAndVal.containsKey(int_depth)) 
-						{
-							HashMap<String, Integer> hmap_CatAndVal = new HashMap<>(hmap_DepthCatAndVal.get(int_depth));
-							if (hmap_CatAndVal.containsKey(str_cat)) 
-							{
-								int int_old =hmap_CatAndVal.get(str_cat); 
-								hmap_CatAndVal.put(str_cat, int_old+1);
-							}
-							else
-							{
-								hmap_CatAndVal.put(str_cat, 1);
-							}
-							
-							hmap_DepthCatAndVal.put(int_depth, hmap_CatAndVal);
-						}
-						else
-						{
-							HashMap<String, Integer> hmap_temp = new HashMap<>();
-							hmap_temp.put(str_cat, 1);
-							hmap_DepthCatAndVal.put(int_depth, hmap_temp);
-							
-						}
-					}
-				}
-				hmap_result.put(str_entName, hmap_DepthCatAndVal);
-			}
-			System.out.println("size of the map"+hmap_result.size() );
-			br_MainFile.close();
-		} 
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		long stopTime = System.nanoTime();
-		System.out.println("Time" + (stopTime - startTime)/1000000000);
-		return hmap_result;
-	}
-	
-	private  Map<Integer,String> getCategoryName(String categoryName,HashMap<String, HashSet<String>> hmap_categoryMap) 
-	{
-		final Map<Integer,String> mainCategoryNames = new HashMap<>();
-		
-		for(Entry<String, HashSet<String>>  entry_CatAndSubs : hmap_categoryMap.entrySet())
-		{
-			String str_Cat = entry_CatAndSubs.getKey().substring(0,entry_CatAndSubs.getKey().indexOf(GlobalVariables.str_depthSeparator));
-			String str_depth = entry_CatAndSubs.getKey().substring(entry_CatAndSubs.getKey().indexOf(GlobalVariables.str_depthSeparator)+GlobalVariables.str_depthSeparator.length(),entry_CatAndSubs.getKey().length());
-			if(entry_CatAndSubs.getValue().contains(categoryName)) 
-			{
-				mainCategoryNames.put(Integer.parseInt(str_depth),str_Cat);
-			}
-				
-		}
-		return mainCategoryNames;
-	}
+
 	public static void writeCategoryTreeToAFile(Map<String, HashSet <String>> hmap, String str_folderName) {
 
 

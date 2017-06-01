@@ -33,110 +33,110 @@ public class ReadFile_DoubleCheck
 		//test_CategoryMap();
 		//writeMatchingLinesToFile(str_smallFile, "FilesCleaned.zip", "Results_fromFilesCleaned",true);
 		//compareTwoHashSet("EntityList.txt", "test_infoBox.txt");
-		createCategoryTrees();
+		createCategoryTree();
 	}
 	private static void resultEntityAndPath()
 	{
-//		try {
-//				
-//			HashMap<String, HashSet<String>> hmap_categoryMap = createCategoryMap();
-//			for (Entry<String, HashSet<String>> entity_CatAndSubCats : hmap_categoryMap.entrySet()) 
-//			{
-//				HashSet<String> hset_catAndValues = entity_CatAndSubCats.getValue();
-//				for (String str_cat: hset_catAndValues)
-//				{
-//					if (str_cat.contains("american_astrophysicists")) 
+		try {
+				
+			HashMap<String, HashSet<String>> hmap_categoryMap = createCategoryMap();
+			for (Entry<String, HashSet<String>> entity_CatAndSubCats : hmap_categoryMap.entrySet()) 
+			{
+				HashSet<String> hset_catAndValues = entity_CatAndSubCats.getValue();
+				for (String str_cat: hset_catAndValues)
+				{
+					if (str_cat.contains("american_astrophysicists")) 
+					{
+						System.out.println(str_cat);
+					}
+				}
+			}
+			
+			String line=null;
+			BufferedReader br_MainFile = new BufferedReader(new FileReader(GlobalVariables.path_Local+File.separator+"Results_fromFilesCleaned"));
+			ArrayList<String> arrList_mainFile = WriteReadFromFile.readFileToList("Results_fromFilesCleaned");
+			File Dir = new File(System.getProperty("user.dir")+File.separator+"ResultFilesBasedOnLevel");
+			
+			if (!Dir.exists()) 
+			{
+				Dir.mkdir();
+			}
+			
+			for (Entry<String, HashSet<String>> entity_CatAndSubCats : hmap_categoryMap.entrySet()) {
+			
+				String str_mainCat = entity_CatAndSubCats.getKey();
+				HashSet<String> hset_subCats = entity_CatAndSubCats.getValue();
+				
+				for (Integer i = 1; i <= GlobalVariables.levelOfTheTree; i++) 
+				{
+					
+					File log = new File(Dir+File.separator+ "entitiesLevelBased"+i.toString());
+					
+					if (!log.exists()) 
+					{
+						log.createNewFile();
+					}
+					
+					
+					BufferedWriter bufferedWriter = new BufferedWriter( new FileWriter(log,true));
+					
+					HashSet<String> hset_subCatsBasedonLevel = new HashSet<>();
+					for (String str_subCat: hset_subCats)
+					{
+						if (str_subCat.contains(GlobalVariables.str_depthSeparator+i.toString())) 
+						{
+							//String str_subcat = str_subCat.replace(">", "").replace("category:", "").toLowerCase();
+							hset_subCatsBasedonLevel.add(str_subCat.replace(">", "").replace("category:", "").toLowerCase().substring(0, str_subCat.indexOf(GlobalVariables.str_depthSeparator)));
+						}
+					}
+					
+					for (String str_mainFileLine : arrList_mainFile) 
+					{
+						String str_subcat =str_mainFileLine.split(" ")[1].replace(">", "").replace("category:", "").toLowerCase();
+						if (hset_subCatsBasedonLevel.contains(str_subcat)) 
+						{
+							if (str_subcat.contains("american_astrophysicists")) 
+							{
+								System.out.println("Yes");
+							}
+							bufferedWriter.write(str_mainFileLine.split(" ")[0]+","+str_subcat+","+i.toString()+","+str_mainCat);
+							bufferedWriter.newLine();
+							System.out.println(str_mainFileLine.split(" ")[0]+","+str_subcat+","+i.toString()+","+str_mainCat);
+						}
+							
+					}
+//					for (Entry<String, String> entity_entityAndCat : hmap_mainFile.entrySet()) {
 //					{
-//						System.out.println(str_cat);
-//					}
-//				}
-//			}
-//			
-//			String line=null;
-//			BufferedReader br_MainFile = new BufferedReader(new FileReader(GlobalVariables.path_Local+File.separator+"Results_fromFilesCleaned"));
-//			ArrayList<String> arrList_mainFile = WriteReadFromFile.readFileToList("Results_fromFilesCleaned");
-//			File Dir = new File(System.getProperty("user.dir")+File.separator+"ResultFilesBasedOnLevel");
-//			
-//			if (!Dir.exists()) 
-//			{
-//				Dir.mkdir();
-//			}
-//			
-//			for (Entry<String, HashSet<String>> entity_CatAndSubCats : hmap_categoryMap.entrySet()) {
-//			
-//				String str_mainCat = entity_CatAndSubCats.getKey();
-//				HashSet<String> hset_subCats = entity_CatAndSubCats.getValue();
-//				
-//				for (Integer i = 1; i <= GlobalVariables.levelOfTheTree; i++) 
-//				{
-//					
-//					File log = new File(Dir+File.separator+ "entitiesLevelBased"+i.toString());
-//					
-//					if (!log.exists()) 
-//					{
-//						log.createNewFile();
-//					}
-//					
-//					
-//					BufferedWriter bufferedWriter = new BufferedWriter( new FileWriter(log,true));
-//					
-//					HashSet<String> hset_subCatsBasedonLevel = new HashSet<>();
-//					for (String str_subCat: hset_subCats)
-//					{
-//						if (str_subCat.contains(GlobalVariables.str_depthSeparator+i.toString())) 
-//						{
-//							//String str_subcat = str_subCat.replace(">", "").replace("category:", "").toLowerCase();
-//							hset_subCatsBasedonLevel.add(str_subCat.replace(">", "").replace("category:", "").toLowerCase().substring(0, str_subCat.indexOf(GlobalVariables.str_depthSeparator)));
+//						
 //						}
 //					}
-//					
-//					for (String str_mainFileLine : arrList_mainFile) 
+					bufferedWriter.close();
+				}
+				
+//				while ((line = br_MainFile.readLine()) != null)
+//				{
+//					String str_entity = line.split(" ")[0].replace(">", "");
+//					for (Integer i = 1; i <= GlobalVariables.levelOfTheTree; i++) 
 //					{
-//						String str_subcat =str_mainFileLine.split(" ")[1].replace(">", "").replace("category:", "").toLowerCase();
-//						if (hset_subCatsBasedonLevel.contains(str_subcat)) 
+//						String str_subcat = line.split(" ")[1].replace(">", "").replace("category:", "").toLowerCase(); 
+//						String str_subcatAndLevel = line.split(" ")[1].replace(">", "").replace("category:", "").toLowerCase()+GlobalVariables.str_depthSeparator+i.toString();
+//						String str_depth=str_subcatAndLevel.substring(str_subcatAndLevel.indexOf(GlobalVariables.str_depthSeparator)+GlobalVariables.str_depthSeparator.length(), str_subcatAndLevel.length());
+//						if (hset_subCats.contains(str_subcatAndLevel))
 //						{
-//							if (str_subcat.contains("american_astrophysicists")) 
-//							{
-//								System.out.println("Yes");
-//							}
-//							bufferedWriter.write(str_mainFileLine.split(" ")[0]+","+str_subcat+","+i.toString()+","+str_mainCat);
-//							bufferedWriter.newLine();
-//							System.out.println(str_mainFileLine.split(" ")[0]+","+str_subcat+","+i.toString()+","+str_mainCat);
+//							System.out.println(str_entity+ "," +str_subcat+","+str_depth);
 //						}
-//							
+//					
 //					}
-////					for (Entry<String, String> entity_entityAndCat : hmap_mainFile.entrySet()) {
-////					{
-////						
-////						}
-////					}
-//					bufferedWriter.close();
 //				}
-//				
-////				while ((line = br_MainFile.readLine()) != null)
-////				{
-////					String str_entity = line.split(" ")[0].replace(">", "");
-////					for (Integer i = 1; i <= GlobalVariables.levelOfTheTree; i++) 
-////					{
-////						String str_subcat = line.split(" ")[1].replace(">", "").replace("category:", "").toLowerCase(); 
-////						String str_subcatAndLevel = line.split(" ")[1].replace(">", "").replace("category:", "").toLowerCase()+GlobalVariables.str_depthSeparator+i.toString();
-////						String str_depth=str_subcatAndLevel.substring(str_subcatAndLevel.indexOf(GlobalVariables.str_depthSeparator)+GlobalVariables.str_depthSeparator.length(), str_subcatAndLevel.length());
-////						if (hset_subCats.contains(str_subcatAndLevel))
-////						{
-////							System.out.println(str_entity+ "," +str_subcat+","+str_depth);
-////						}
-////					
-////					}
-////				}
-//			
-//			}
-//
-//			
-//			br_MainFile.close();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+			
+			}
+
+			
+			br_MainFile.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	/*
@@ -145,7 +145,7 @@ public class ReadFile_DoubleCheck
 	 * I
 	 * O childfile
 	 */
-	private static HashMap<String, HashSet<String>> createCategoryTrees() 
+	private static HashMap<String, HashSet<String>> createCategoryTree() 
 	{
 		long startTime = System.nanoTime();
 		
